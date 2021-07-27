@@ -1,0 +1,11 @@
+.task-container {
+  border: 1px solid lightgrey;
+  padding: 8px;
+  border-radius: 2px;
+  margin-bottom: 8px;
+  background-color: white;
+}
+
+.task-list-container {
+  padding: 8px;
+}

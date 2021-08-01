@@ -1,26 +1,62 @@
-import React, { useState } from "react";
-import { initialData } from "../Mocks/initial-data";
+import React, { useState, useEffect } from "react";
 import Column from "./Components/Column";
 import {
   DragDropContext,
   DragStart,
-  Droppable,
   DragUpdate,
   DropResult,
 } from "react-beautiful-dnd";
 import styled from "styled-components";
-import NavBar from "../Components/NavBar";
 import { Button } from "@material-ui/core";
 import Select from "react-select";
-import { Card, CardBody, CardSubtitle, CardText, CardTitle } from "reactstrap";
+import { InitialData } from "../../Mocks/Initial-data";
+import { Layout } from "../../Containers/Layout";
+import { IWorkArea, IWorkBuilding } from "../../Interfaces";
+import { toast } from "react-toastify";
+import { getWorkBuildings, getWorkBuildingWorkAreas } from "../../API/Api";
 
 const Container = styled.div`
   display: flex;
   flex-direction: row;
 `;
-function Schedular() {
-  const [taskListData, setTaskListData] = useState(initialData);
+export function Scheduler() {
+  const [taskListData, setTaskListData] = useState(InitialData);
   const [homeIndex, setHomeIndex] = useState<number | null>(null);
+  const [workBuildings, setWorkBuildings] = useState<IWorkBuilding[]>([]);
+  const [workAreas, setWorkAreas] = useState<IWorkArea[]>([]);
+
+  useEffect(() => {
+    fetchWorkBuildings();
+  }, []);
+
+  const fetchWorkBuildings = async () => {
+    try {
+      const buildings = await getWorkBuildings();
+      setWorkBuildings(buildings);
+      console.log("BUILDINGS", buildings);
+      if (buildings) {
+        await fetchBuildingWorkAreas(buildings[0]);
+      }
+    } catch (error) {
+      toast.error("Unable to fetch work buildings", {
+        autoClose: false,
+      });
+    }
+  };
+
+  const fetchBuildingWorkAreas = async (workBuilding: IWorkBuilding) => {
+    try {
+      const buildingWorkAreas = await getWorkBuildingWorkAreas(workBuilding.id);
+      setWorkAreas(buildingWorkAreas);
+      console.log("Work Areas", buildingWorkAreas);
+
+      //const buildingWorkAreas = await getWorkAreas()
+    } catch (error) {
+      toast.error(`Unable to fetch Building: ${workBuilding.name} work areas`, {
+        autoClose: false,
+      });
+    }
+  };
 
   const onDragEnd = (result: DropResult) => {
     setHomeIndex(null);
@@ -116,73 +152,7 @@ function Schedular() {
   const onDragUpdate = (update: DragUpdate) => {};
 
   return (
-    <NavBar>
-      {false && (
-        <>
-          <legend style={{ textAlign: "center" }}>
-            Current Work Area Schedules
-          </legend>
-          <div style={{ display: "flex", justifyContent: "center" }}>
-            <Card style={{ width: "300px", margin: "20px" }}>
-              <CardBody>
-                <CardTitle tag="h5">Work Area 1</CardTitle>
-                <CardSubtitle tag="h6" className="mb-2 text-muted">
-                  Station Schedule
-                </CardSubtitle>
-                <CardText>
-                  <div>
-                    <div>Station 1: Zach Smith</div>
-                    <div>Station 2: Don Nelson</div>
-                    <div>Station 3:</div>
-                  </div>
-                </CardText>
-              </CardBody>
-            </Card>
-            <Card style={{ width: "300px", margin: "20px" }}>
-              <CardBody>
-                <CardTitle tag="h5">Work Area 2</CardTitle>
-                <CardSubtitle tag="h6" className="mb-2 text-muted">
-                  Station Schedule
-                </CardSubtitle>
-                <CardText>
-                  <div>
-                    <div>Station 1:</div>
-                    <div>Station 2: </div>
-                    <div>Station 3:</div>
-                  </div>
-                </CardText>
-              </CardBody>
-            </Card>
-            <Card style={{ width: "300px", margin: "20px" }}>
-              <CardBody>
-                <CardTitle tag="h5">Work Area 3</CardTitle>
-                <CardSubtitle tag="h6" className="mb-2 text-muted">
-                  Station Schedule
-                </CardSubtitle>
-                <CardText>
-                  <div>
-                    <div>Station 1: </div>
-                    <div>Station 2: </div>
-                    <div>Station 3:</div>
-                  </div>
-                </CardText>
-              </CardBody>
-            </Card>
-          </div>
-          <Card style={{ width: "300px", margin: "20px" }}>
-            <CardBody>
-              <CardTitle tag="h5">Unassigned Workers</CardTitle>
-
-              <CardText>
-                <div>
-                  <div>Sally McSallerson </div>
-                  <div>Alex Woodward </div>
-                </div>
-              </CardText>
-            </CardBody>
-          </Card>
-        </>
-      )}
+    <Layout>
       {false && (
         <div
           style={{
@@ -299,8 +269,6 @@ function Schedular() {
           </DragDropContext>
         </>
       )}
-    </NavBar>
+    </Layout>
   );
 }
-
-export default Schedular;

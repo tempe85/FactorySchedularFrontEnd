@@ -1,6 +1,6 @@
 import { ITaskData } from "../Interfaces";
 
-export const initialData: ITaskData = {
+export const InitialData: ITaskData = {
   tasks: {
     "task-1": { id: "task-1", content: "Zach Smith" },
     "task-2": { id: "task-2", content: "Don Nelson" },

@@ -1,9 +1,13 @@
 import React from "react";
-import NavBar from "../../Components/NavBar";
+import { toast } from "react-toastify";
+import { Layout } from "../../Containers/Layout";
 
-function HomePage() {
+export function HomePage() {
+  const notify = () => {
+    toast("Wow so easy!");
+  };
   return (
-    <NavBar>
+    <Layout>
       <h1
         style={{
           display: "flex",
@@ -21,10 +25,9 @@ function HomePage() {
           alignItems: "center",
         }}
       >
+        <button onClick={notify}>CLICK ME</button>
         Please login and go to the schedule page to update work area schedules.
       </div>
-    </NavBar>
+    </Layout>
   );
 }
-
-export default HomePage;

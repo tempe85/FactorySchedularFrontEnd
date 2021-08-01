@@ -7,11 +7,14 @@ import {
   Toolbar,
   Typography,
 } from "@material-ui/core";
-import { Menu as MenuIcon, Language } from "@material-ui/icons";
-import React, { useState } from "react";
+import { Menu as MenuIcon, Language, Colorize } from "@material-ui/icons";
+import React, { useState, useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import { LoginModal } from "../Login";
+import { LanguageType } from "../../Enums/LanguageType";
+import { LanguageContext } from "../../Contexts/LanguageContext";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -27,12 +30,14 @@ const useStyles = makeStyles((theme) => ({
 
 interface IProps {
   children: React.ReactNode;
+  language: LanguageType;
 }
 
-export function NavBar(props: IProps) {
-  const [language, setLanguage] = useState("English");
+export function NavBar({ children, language }: IProps) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+
+  const languageContext = useContext(LanguageContext);
 
   const toggleLoginModal = () => {
     setIsLoginModalOpen(!isLoginModalOpen);
@@ -42,12 +47,17 @@ export function NavBar(props: IProps) {
     setIsLoginModalOpen(true);
   };
 
-  const handleClose = () => {
+  const handleLanguageMenuClose = () => {
     setAnchorEl(null);
   };
 
-  const handleClick = (event: any) => {
+  const handleLanguageMenuClicked = (event: any) => {
     setAnchorEl(event.currentTarget);
+  };
+
+  const handleLanguageMenuItemClicked = (language: LanguageType) => {
+    languageContext.setLanguage(language);
+    handleLanguageMenuClose();
   };
 
   const classes = useStyles();
@@ -63,21 +73,40 @@ export function NavBar(props: IProps) {
           >
             <MenuIcon />
           </IconButton>
-          <Button color="inherit">Home Page</Button>
+          <Button color="inherit">
+            {" "}
+            <Link to="/" style={{ textDecoration: "none", color: "white" }}>
+              Home Page
+            </Link>
+          </Button>
           <Typography variant="h6" className={classes.title}></Typography>
           <Button color="inherit" onClick={openLoginModal}>
             Log Out
           </Button>
-          <Button color="inherit">Schedule</Button>
+          <Button color="inherit">
+            {" "}
+            <Link
+              to="/Schedule"
+              style={{ textDecoration: "none", color: "white" }}
+            >
+              Schedule
+            </Link>
+          </Button>
           <Button color="inherit" title="View current Work Area schedules">
-            Work Areas
+            <Link
+              to="/WorkAreas"
+              style={{ textDecoration: "none", color: "white" }}
+            >
+              Work Areas
+            </Link>
           </Button>
           <Button
             variant="contained"
             color="primary"
-            aria-controls="language-menu"
+            aria-controls="simple-menu"
             aria-haspopup="true"
-            onClick={handleClick}
+            onClick={handleLanguageMenuClicked}
+            style={{ width: "120px" }}
           >
             <ArrowDropDownIcon />
             <Language />
@@ -88,16 +117,32 @@ export function NavBar(props: IProps) {
             anchorEl={anchorEl}
             keepMounted
             open={Boolean(anchorEl)}
-            onClose={handleClose}
+            onClose={handleLanguageMenuClose}
           >
-            <MenuItem onClick={handleClose}>English</MenuItem>
-            <MenuItem onClick={handleClose}>Spanish</MenuItem>
-            <MenuItem onClick={handleClose}>French</MenuItem>
+            <MenuItem
+              onClick={() =>
+                handleLanguageMenuItemClicked(LanguageType.English)
+              }
+            >
+              English
+            </MenuItem>
+            <MenuItem
+              onClick={() =>
+                handleLanguageMenuItemClicked(LanguageType.Spanish)
+              }
+            >
+              Spanish
+            </MenuItem>
+            <MenuItem
+              onClick={() => handleLanguageMenuItemClicked(LanguageType.French)}
+            >
+              French
+            </MenuItem>
           </Menu>
         </Toolbar>
       </AppBar>
       <LoginModal isOpen={isLoginModalOpen} toggle={toggleLoginModal} />
-      {props.children}
+      {children}
     </>
   );
 }

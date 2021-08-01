@@ -2,21 +2,25 @@ import React from "react";
 import "@fontsource/roboto";
 import "./App.css";
 import NavBar from "./Components/NavBar";
-import Schedular from "./Schedular";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import HomePage from "./Pages/HomePage/HomePage";
+import { HomePage, Scheduler, WorkAreas } from "./Pages";
 
 export const routes = [
   {
     path: "/WorkAreas",
+    sitebar: () => <div></div>,
+    main: () => <WorkAreas />,
+  },
+  {
+    path: "/Schedule",
+    exact: true,
     sidebar: () => <div></div>,
-    main: () => <HomePage />,
+    main: () => <Scheduler />,
   },
   {
     path: "/",
-    exact: true,
     sidebar: () => <div></div>,
-    main: () => <Schedular />,
+    main: () => <HomePage />,
   },
 ];
 

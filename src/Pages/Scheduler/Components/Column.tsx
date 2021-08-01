@@ -1,4 +1,3 @@
-import { CSSProperties } from "@material-ui/core/styles/withStyles";
 import React from "react";
 import { Task } from "./Task";
 import { Droppable, Draggable } from "react-beautiful-dnd";

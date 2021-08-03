@@ -15,6 +15,7 @@ import { LoginModal } from "../Login";
 import { LanguageType } from "../../Enums/LanguageType";
 import { LanguageContext } from "../../Contexts/LanguageContext";
 import { Link } from "react-router-dom";
+import { useAuth } from "oidc-react";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -34,6 +35,8 @@ interface IProps {
 }
 
 export function NavBar({ children, language }: IProps) {
+  const auth = useAuth();
+  console.log("auth", auth);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
@@ -41,10 +44,6 @@ export function NavBar({ children, language }: IProps) {
 
   const toggleLoginModal = () => {
     setIsLoginModalOpen(!isLoginModalOpen);
-  };
-
-  const openLoginModal = () => {
-    setIsLoginModalOpen(true);
   };
 
   const handleLanguageMenuClose = () => {
@@ -58,6 +57,14 @@ export function NavBar({ children, language }: IProps) {
   const handleLanguageMenuItemClicked = (language: LanguageType) => {
     languageContext.setLanguage(language);
     handleLanguageMenuClose();
+  };
+
+  const handleSignout = async () => {
+    try {
+      await auth.userManager.signoutRedirect("http://localhost:3000");
+    } catch (e) {
+      console.log("ERROR", e);
+    }
   };
 
   const classes = useStyles();
@@ -80,9 +87,18 @@ export function NavBar({ children, language }: IProps) {
             </Link>
           </Button>
           <Typography variant="h6" className={classes.title}></Typography>
-          <Button color="inherit" onClick={openLoginModal}>
-            Log Out
-          </Button>
+          {auth && auth.userData ? (
+            <>
+              <span>{auth.userData.profile.name}</span>
+              <Button color="inherit" onClick={() => handleSignout()}>
+                Log Out
+              </Button>
+            </>
+          ) : (
+            <Button color="inherit" onClick={() => auth.signIn()}>
+              Log IN
+            </Button>
+          )}
           <Button color="inherit">
             {" "}
             <Link

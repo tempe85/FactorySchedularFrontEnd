@@ -11,7 +11,13 @@ import { Button } from "@material-ui/core";
 import Select from "react-select";
 import { InitialData } from "../../Mocks/Initial-data";
 import { Layout } from "../../Containers/Layout";
-import { IWorkArea, IWorkBuilding } from "../../Interfaces";
+import {
+  IWorkArea,
+  IWorkBuilding,
+  IWorker,
+  IWorkStation,
+  IWorkStationWorkers,
+} from "../../Interfaces";
 import { toast } from "react-toastify";
 import { getWorkBuildings, getWorkBuildingWorkAreas } from "../../API/Api";
 
@@ -19,10 +25,28 @@ const Container = styled.div`
   display: flex;
   flex-direction: row;
 `;
+
+interface ISelectionType {
+  value: string;
+  label: string;
+}
 export function Scheduler() {
   const [taskListData, setTaskListData] = useState(InitialData);
   const [homeIndex, setHomeIndex] = useState<number | null>(null);
   const [workBuildings, setWorkBuildings] = useState<IWorkBuilding[]>([]);
+  const [workBuildingsSelections, setWorkBuildingsSelections] = useState<
+    ISelectionType[]
+  >([]);
+  const [workAreaSelections, setWorkAreaSelections] = useState<
+    ISelectionType[]
+  >([]);
+  const [buildingSelection, setBuldingSelection] = useState<ISelectionType>();
+  const [workAreaSelection, setWorkAreaSelection] = useState<ISelectionType>();
+  const [stations, setStations] = useState<IWorkStation[]>([]);
+  const [workers, setWorkers] = useState<IWorker[]>([]);
+  const [workStationWorkers, setWorkStationWorkers] = useState<
+    IWorkStationWorkers[]
+  >([]);
   const [workAreas, setWorkAreas] = useState<IWorkArea[]>([]);
 
   useEffect(() => {
@@ -33,6 +57,9 @@ export function Scheduler() {
     try {
       const buildings = await getWorkBuildings();
       setWorkBuildings(buildings);
+      const selections = getReactSelections(buildings.map((p) => p.name));
+      setWorkBuildingsSelections(selections);
+
       console.log("BUILDINGS", buildings);
       if (buildings) {
         await fetchBuildingWorkAreas(buildings[0]);
@@ -44,10 +71,21 @@ export function Scheduler() {
     }
   };
 
+  function getReactSelections(values: string[]): ISelectionType[] {
+    return values.map((p) => ({
+      value: p,
+      label: p,
+    }));
+  }
+
   const fetchBuildingWorkAreas = async (workBuilding: IWorkBuilding) => {
     try {
       const buildingWorkAreas = await getWorkBuildingWorkAreas(workBuilding.id);
       setWorkAreas(buildingWorkAreas);
+      const selections = getReactSelections(
+        buildingWorkAreas.map((p) => p.name)
+      );
+      setWorkAreaSelections(selections);
       console.log("Work Areas", buildingWorkAreas);
 
       //const buildingWorkAreas = await getWorkAreas()
@@ -188,83 +226,80 @@ export function Scheduler() {
         >
           {(provided) => ( */}
               {/* <Container {...provided.droppableProps} ref={provided.innerRef}> */}
-              <div style={{ display: "flex", justifyContent: "space-evenly" }}>
-                <div>
+              <Select
+                options={workBuildingsSelections}
+                onChange={(selection) => {
+                  if (selection) {
+                    setBuldingSelection(selection);
+                  }
+                }}
+              />
+              {buildingSelection && (
+                <Select
+                  options={workAreaSelections}
+                  onChange={(selection) => {
+                    if (selection) {
+                      setWorkAreaSelection(selection);
+                    }
+                  }}
+                />
+              )}
+              {workAreaSelection && (
+                <div
+                  style={{ display: "flex", justifyContent: "space-evenly" }}
+                >
                   <div>
-                    <h1 style={{ textAlign: "center" }}>Work Area 1</h1>
-                    <Container>
-                      {taskListData.columnOrder.map((columnId, index) => {
-                        if (columnId === "workers") return;
-                        const column = taskListData.columns?.[columnId];
-                        const tasks = column.taskIds.map(
-                          (taskId) => taskListData.tasks?.[taskId]
-                        );
+                    <div>
+                      <h1 style={{ textAlign: "center" }}>Work Area 1</h1>
+                      <Container>
+                        {taskListData.columnOrder.map((columnId, index) => {
+                          if (columnId === "workers") return;
+                          const column = taskListData.columns?.[columnId];
+                          const tasks = column.taskIds.map(
+                            (taskId) => taskListData.tasks?.[taskId]
+                          );
 
-                        const isDropDisabled =
-                          homeIndex !== null ? index < homeIndex : false;
-                        return (
-                          <Column
-                            key={column.id}
-                            column={column}
-                            tasks={tasks}
-                            isDropDisabled={false}
-                            index={index}
-                          />
-                        );
-                      })}
-                      {/* {provided.placeholder} */}
-                    </Container>
+                          const isDropDisabled =
+                            homeIndex !== null ? index < homeIndex : false;
+                          return (
+                            <Column
+                              key={column.id}
+                              column={column}
+                              tasks={tasks}
+                              isDropDisabled={false}
+                              index={index}
+                            />
+                          );
+                        })}
+                        {/* {provided.placeholder} */}
+                      </Container>
+                    </div>
                   </div>
-                  <div>
-                    <h1 style={{ textAlign: "center" }}>Work Area 2</h1>
-                    <Container>
-                      {taskListData.columnOrder.map((columnId, index) => {
-                        if (columnId === "workers") return;
-                        const column = taskListData.columns?.[columnId];
-                        const tasks = column.taskIds.map(
-                          (taskId) => taskListData.tasks?.[taskId]
-                        );
 
-                        const isDropDisabled =
-                          homeIndex !== null ? index < homeIndex : false;
-                        return (
-                          <Column
-                            key={column.id}
-                            column={column}
-                            tasks={tasks}
-                            isDropDisabled={false}
-                            index={index}
-                          />
-                        );
-                      })}
-                      {/* {provided.placeholder} */}
-                    </Container>
-                  </div>
-                </div>
-
-                {/* )}
+                  {/* )}
         </Droppable> */}
-                <div>
-                  <Container>
-                    <Column
-                      column={taskListData.columns["workers"]}
-                      tasks={taskListData.columns["workers"].taskIds.map(
-                        (p) => taskListData.tasks?.[p]
-                      )}
-                      isDropDisabled={false}
-                      index={5}
-                    />
-                  </Container>
-                  <div style={{ textAlign: "center" }}>
-                    <Button color="primary" variant="contained">
-                      Save Schedule
-                    </Button>
-                    <Button color="secondary" variant="contained">
-                      Undo
-                    </Button>
+                  <div>
+                    <Container>
+                      <Column
+                        column={taskListData.columns["workers"]}
+                        tasks={taskListData.columns["workers"].taskIds.map(
+                          (p) => taskListData.tasks?.[p]
+                        )}
+                        isDropDisabled={false}
+                        index={5}
+                      />
+                    </Container>
+                    <div style={{ textAlign: "center" }}>
+                      <Button color="primary" variant="contained">
+                        Save Schedule
+                      </Button>
+                      <Button color="secondary" variant="contained">
+                        Undo
+                      </Button>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
             </>
           </DragDropContext>
         </>

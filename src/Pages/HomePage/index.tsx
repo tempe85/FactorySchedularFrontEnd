@@ -1,11 +1,7 @@
 import React from "react";
-import { toast } from "react-toastify";
 import { Layout } from "../../Containers/Layout";
 
 export function HomePage() {
-  const notify = () => {
-    toast("Wow so easy!");
-  };
   return (
     <Layout>
       <h1
@@ -25,7 +21,6 @@ export function HomePage() {
           alignItems: "center",
         }}
       >
-        <button onClick={notify}>CLICK ME</button>
         Please login and go to the schedule page to update work area schedules.
       </div>
     </Layout>

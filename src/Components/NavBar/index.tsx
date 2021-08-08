@@ -16,6 +16,7 @@ import { LanguageType } from "../../Enums/LanguageType";
 import { LanguageContext } from "../../Contexts/LanguageContext";
 import { Link } from "react-router-dom";
 import { useAuth } from "oidc-react";
+import { toast } from "react-toastify";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -67,6 +68,21 @@ export function NavBar({ children, language }: IProps) {
     }
   };
 
+  const handleLogin = async () => {
+    try {
+      await auth.signIn();
+    } catch (e) {
+      toast.error(
+        `Unable to login, no response from Authentication service! ${e}`,
+        {
+          autoClose: false,
+        }
+      );
+    }
+  };
+
+  const isLoggedIn = auth && auth.userData;
+
   const classes = useStyles();
   return (
     <>
@@ -95,19 +111,21 @@ export function NavBar({ children, language }: IProps) {
               </Button>
             </>
           ) : (
-            <Button color="inherit" onClick={() => auth.signIn()}>
-              Log IN
+            <Button color="inherit" onClick={handleLogin}>
+              Log In
             </Button>
           )}
-          <Button color="inherit">
-            {" "}
-            <Link
-              to="/Schedule"
-              style={{ textDecoration: "none", color: "white" }}
-            >
-              Schedule
-            </Link>
-          </Button>
+          {isLoggedIn && (
+            <Button color="inherit">
+              {" "}
+              <Link
+                to="/Schedule"
+                style={{ textDecoration: "none", color: "white" }}
+              >
+                Schedule
+              </Link>
+            </Button>
+          )}
           <Button color="inherit" title="View current Work Area schedules">
             <Link
               to="/WorkAreas"

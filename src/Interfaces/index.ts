@@ -14,3 +14,4 @@ export type { IWorkStationsByWorkArea } from "./IWorkStationsByWorkArea";
 export type { IWorkStationCreate } from "./IWorkStationCreate";
 export type { IWorkStationUpdate } from "./IWorkStationUpdate";
 export type { IUser } from "./IUser";
+export type { IUserProps } from "./IUserProps";

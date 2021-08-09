@@ -4,7 +4,9 @@ import "./App.css";
 import NavBar from "./Components/NavBar";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { HomePage, Scheduler, WorkAreas } from "./Pages";
-import { AuthProvider, AuthProviderProps } from "oidc-react";
+import { AuthProvider, AuthProviderProps, User } from "oidc-react";
+import { LoggedInUser } from "./Containers/LoggedInUser";
+import { AuthProviderPropsExtended } from "./Interfaces/AuthProviderPropsExtended";
 
 export const routes = [
   {
@@ -25,15 +27,15 @@ export const routes = [
   },
 ];
 
-const oidcConfiguration: AuthProviderProps = {
-  onSignIn: async (user: any) => {
-    console.log(user);
+const oidcConfiguration: AuthProviderPropsExtended = {
+  onSignIn: async (user: LoggedInUser | null) => {
     window.location.hash = "";
   },
   autoSignIn: false,
   authority: "https://localhost:5001",
   clientId: "frontend",
-  scope: "openid profile factoryScheduler.fullaccess IdentityServerApi roles",
+  scope:
+    "openid profile factoryScheduler.fullaccess IdentityServerApi roles user_data",
   responseType: "code", //id_token
   redirectUri:
     process.env.NODE_ENV === "development"
@@ -44,7 +46,7 @@ const oidcConfiguration: AuthProviderProps = {
 //update client id later
 function App() {
   return (
-    <AuthProvider {...oidcConfiguration}>
+    <AuthProvider {...(oidcConfiguration as AuthProviderProps)}>
       <Router>
         <Switch>
           {routes.map((route, index) => (

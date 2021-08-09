@@ -15,8 +15,10 @@ import { LoginModal } from "../Login";
 import { LanguageType } from "../../Enums/LanguageType";
 import { LanguageContext } from "../../Contexts/LanguageContext";
 import { Link } from "react-router-dom";
-import { useAuth } from "oidc-react";
 import { toast } from "react-toastify";
+import { withUser } from "../../HOC/withUser";
+import { AuthContextPropsExtended } from "../../Interfaces/AuthContextPropsExtended";
+import { IUserProps } from "../../Interfaces";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -35,9 +37,7 @@ interface IProps {
   language: LanguageType;
 }
 
-export function NavBar({ children, language }: IProps) {
-  const auth = useAuth();
-  console.log("auth", auth);
+export function NavBar({ children, language, auth }: IProps & IUserProps) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
@@ -181,4 +181,4 @@ export function NavBar({ children, language }: IProps) {
   );
 }
 
-export default NavBar;
+export default withUser(NavBar);

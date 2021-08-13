@@ -4,31 +4,31 @@ import { ITextLanguageTranslation } from "../Interfaces";
 export const InitialHardCodedTextConfigMap: Map<
   string,
   ITextLanguageTranslation[]
-> = new Map<string, ITextLanguageTranslation[]>([
+> = new Map<TextTranslationType, ITextLanguageTranslation[]>([
   [
-    "Welcome To Factory Schedular!",
+    TextTranslationType.WelcomeToFactorySchedular,
     [
       {
         languageType: LanguageType.English,
-        translation: "Welcome To Factory Schedular!",
+        translation: TextTranslationType.WelcomeToFactorySchedular,
       },
     ],
   ],
   [
-    "English",
+    TextTranslationType.English,
     [
       {
         languageType: LanguageType.English,
-        translation: "English",
+        translation: TextTranslationType.English,
       },
     ],
   ],
   [
-    "Work Areas",
+    TextTranslationType.WorkAreas,
     [
       {
         languageType: LanguageType.English,
-        translation: "Work Areas",
+        translation: TextTranslationType.WorkAreas,
       },
     ],
   ],
@@ -37,7 +37,7 @@ export const InitialHardCodedTextConfigMap: Map<
     [
       {
         languageType: LanguageType.English,
-        translation: "Spanish",
+        translation: TextTranslationType.Spanish,
       },
     ],
   ],
@@ -46,7 +46,7 @@ export const InitialHardCodedTextConfigMap: Map<
     [
       {
         languageType: LanguageType.English,
-        translation: "French",
+        translation: TextTranslationType.English,
       },
     ],
   ],

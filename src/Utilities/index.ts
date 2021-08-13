@@ -21,10 +21,7 @@ export const CloneArrayOfObjects = <T>(objectArray: T[]): T[] => {
 };
 
 export const GetHardCodedLangaugeDicationaryEnglishStrings = (
-  initialHardCodedTextConfigMap: Map<
-    TextTranslationType,
-    ITextLanguageTranslation[]
-  >
+  initialHardCodedTextConfigMap: Map<string, ITextLanguageTranslation[]>
 ): string[] => {
   return Array.from(initialHardCodedTextConfigMap.values())
     .flat()

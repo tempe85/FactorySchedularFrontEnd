@@ -13,18 +13,15 @@ import {
 import {
   CloneArrayOfObjects,
   ConcatMaps,
-  GetHardCodedLangaugeDicationaryEnglishStrings,
+  GetHardCodedLangaugeDicationaryEnglishStrings as GetHardCodedLanguageDicationaryEnglishStrings,
 } from "../Utilities";
 
 interface IState {
   currentLanguage: ILanguageOption;
   previousLanguage: ILanguageOption;
   languageDictionaries: ISourceTargetTranslations[];
-  hardCodedLanguageDictionary: Map<
-    TextTranslationType,
-    ITextLanguageTranslation[]
-  >;
-  currentTranslations: LanguageType[];
+  hardCodedLanguageDictionary: Map<string, ITextLanguageTranslation[]>;
+  currentHardCodedTranslations: LanguageType[];
   englishTextHardCodedStrings: string[];
 }
 
@@ -38,8 +35,8 @@ export class TranslationStore extends Container<IState> {
     ) as ILanguageOption,
     languageDictionaries: [],
     hardCodedLanguageDictionary: InitialHardCodedTextConfigMap,
-    currentTranslations: [LanguageType.English],
-    englishTextHardCodedStrings: GetHardCodedLangaugeDicationaryEnglishStrings(
+    currentHardCodedTranslations: [LanguageType.English],
+    englishTextHardCodedStrings: GetHardCodedLanguageDicationaryEnglishStrings(
       InitialHardCodedTextConfigMap
     ),
   };
@@ -94,12 +91,72 @@ export class TranslationStore extends Container<IState> {
     );
   };
 
-  private fetchAllHardCodedLanguageTranslationStrings = (
+  private fetchAllHardCodedLanguageTranslationStringsAndUpdateState = async (
     updatedLanguage: LanguageType
   ) => {
-    const { currentTranslations, hardCodedLanguageDictionary } = this.state;
-    if (currentTranslations.includes(updatedLanguage)) return;
+    const { currentHardCodedTranslations } = this.state;
+    if (currentHardCodedTranslations.includes(updatedLanguage)) return;
     const textValues = this.state.englishTextHardCodedStrings;
+    const translatedValues = await this.translateLanguageTextsHandler(
+      textValues
+    );
+    if (!translatedValues) {
+      console.log("No translated values!");
+    } else {
+      this.addTranslatedValuesToHardCodedTranslationMap(translatedValues);
+    }
+  };
+
+  public addTranslatedValuesToHardCodedTranslationMap = (
+    translatedValues: ITranslationResponse
+  ) => {
+    const isValid =
+      this.verifyTranslationResponseObjectIsValid(translatedValues);
+    if (!isValid) {
+      console.log("Translation response was invalid!");
+      return;
+    }
+    const currentLanguage = this.state.currentLanguage.languageType;
+    //TODO: need to actually create a copy!
+    const hardCodedLanguageDictionary = this.state.hardCodedLanguageDictionary;
+
+    console.log(
+      "hardCodedLanguageDictionary",
+      hardCodedLanguageDictionary,
+      this.state.hardCodedLanguageDictionary
+    );
+
+    for (let i = 0; i < translatedValues.translation.length; i++) {
+      const textLanguageTranslationList = hardCodedLanguageDictionary.get(
+        translatedValues.text[i]
+      );
+      if (!textLanguageTranslationList) {
+        console.log(
+          `Could not find ${translatedValues.text} in the hard coded map!`
+        );
+        continue;
+      }
+      const updatedTextLanguageTranslationList = [
+        ...textLanguageTranslationList,
+        {
+          languageType: currentLanguage,
+          translation: translatedValues.translation[i],
+        },
+      ];
+
+      hardCodedLanguageDictionary.set(
+        translatedValues.text[i],
+        updatedTextLanguageTranslationList
+      );
+    }
+
+    this.setState({
+      hardCodedLanguageDictionary,
+      currentHardCodedTranslations: [
+        ...this.state.currentHardCodedTranslations,
+        currentLanguage,
+      ],
+    });
   };
 
   public getHardCodedTextTranslation = (
@@ -207,7 +264,8 @@ export class TranslationStore extends Container<IState> {
   public getStoredTranslationsFromDictionary = (texts: string[]) => {};
 
   public translateLanguageTextsHandler = async (
-    texts: string[]
+    texts: string[],
+    isoString?: string
   ): Promise<ITranslationResponse | undefined> => {
     return await getTextTranslations(
       texts,
@@ -243,10 +301,18 @@ export class TranslationStore extends Container<IState> {
     const updatedLanguageConfiguration = LanguageConfiguration.get(
       updatedLanguage
     ) as ILanguageOption;
-    this.setState((prevState) => ({
-      currentLanguage: updatedLanguageConfiguration,
-      previousLanguage: prevState.currentLanguage,
-    }));
+
+    this.setState(
+      (prevState) => ({
+        currentLanguage: updatedLanguageConfiguration,
+        previousLanguage: prevState.currentLanguage,
+      }),
+      () => {
+        this.fetchAllHardCodedLanguageTranslationStringsAndUpdateState(
+          updatedLanguage
+        );
+      }
+    );
   };
 
   private getCurrentLanguageSourceDestinationDictionary = ():

@@ -15,6 +15,11 @@ import {
   IWorkStationUpdate,
   IWorkStationWorkers,
 } from "../Interfaces";
+import {
+  MockTranslationFrenchResponse,
+  MockTranslationPortugueseResponse,
+  MockTranslationSpanishResponse,
+} from "../Mocks/MockTranslationResponse";
 
 const baseUrl = "https://localhost:5001";
 
@@ -32,13 +37,42 @@ export const getTextTranslations = async (
   text: string[],
   languageIsoString: string
 ): Promise<ITranslationResponse | undefined> => {
+  // switch (languageIsoString) {
+  //   case "fr":
+  //     return Promise.resolve(MockTranslationFrenchResponse);
+  //   case "es":
+  //     return Promise.resolve(MockTranslationSpanishResponse);
+  //   default:
+  //     return Promise.resolve(MockTranslationPortugueseResponse);
+  // }
+
+  try {
+    const response = await fetch("http://flip3.engr.oregonstate.edu:9183/", {
+      method: "POST",
+      mode: "no-cors",
+      credentials: "same-origin",
+      // headers: {
+      //   "Content-Type": "application/json",
+      // },
+      referrerPolicy: "no-referrer",
+      body: JSON.stringify({
+        text,
+        target: languageIsoString,
+      }), // body data type must match "Content-Type" header
+    })
+      .then((res) => res.json())
+      .then((data) => data);
+  } catch (e) {
+    console.log("ERROR:", e);
+  }
+
   try {
     const translations = (
       await axios.post<ITranslationResponse>(
         "http://flip3.engr.oregonstate.edu:9183/",
         {
           text,
-          languageIsoString,
+          target: languageIsoString,
         }
       )
     ).data;

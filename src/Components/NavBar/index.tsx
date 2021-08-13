@@ -19,6 +19,7 @@ import { withUser } from "../../HOC/withUser";
 import { IUserProps } from "../../Interfaces";
 import { withTranslationStore } from "../../HOC/withTranslationStore";
 import { ITranslationStoreProps } from "../../Interfaces/ITranslationStoreProps";
+import { TextTranslationType } from "../../Enums";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -89,6 +90,7 @@ export function NavBar({
   const isLoggedIn = auth && auth.userData;
 
   const classes = useStyles();
+
   return (
     <>
       <AppBar position="static">
@@ -117,7 +119,9 @@ export function NavBar({
             </>
           ) : (
             <Button color="inherit" onClick={handleLogin}>
-              Log In
+              {translationStore.getHardCodedTextTranslation(
+                TextTranslationType.LogIn
+              )}
             </Button>
           )}
           {isLoggedIn && (
@@ -136,7 +140,9 @@ export function NavBar({
               to="/WorkAreas"
               style={{ textDecoration: "none", color: "white" }}
             >
-              Work Areas
+              {translationStore.getHardCodedTextTranslation(
+                TextTranslationType.WorkAreas
+              )}
             </Link>
           </Button>
           <Button color="inherit" title="View current Work Area schedules">
@@ -157,7 +163,9 @@ export function NavBar({
           >
             <ArrowDropDownIcon />
             <Language />
-            {language.languageHumanReadableString}
+            {translationStore.getHardCodedTextTranslation(
+              language.languageHumanReadableString as TextTranslationType
+            )}
           </Button>
           <Menu
             id="simple-menu"
@@ -171,19 +179,25 @@ export function NavBar({
                 handleLanguageMenuItemClicked(LanguageType.English)
               }
             >
-              English
+              {translationStore.getHardCodedTextTranslation(
+                TextTranslationType.English
+              )}
             </MenuItem>
             <MenuItem
               onClick={() =>
                 handleLanguageMenuItemClicked(LanguageType.Spanish)
               }
             >
-              Spanish
+              {translationStore.getHardCodedTextTranslation(
+                TextTranslationType.Spanish
+              )}
             </MenuItem>
             <MenuItem
               onClick={() => handleLanguageMenuItemClicked(LanguageType.French)}
             >
-              French
+              {translationStore.getHardCodedTextTranslation(
+                TextTranslationType.French
+              )}
             </MenuItem>
           </Menu>
         </Toolbar>

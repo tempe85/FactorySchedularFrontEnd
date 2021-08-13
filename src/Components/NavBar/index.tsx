@@ -7,18 +7,18 @@ import {
   Toolbar,
   Typography,
 } from "@material-ui/core";
-import { Menu as MenuIcon, Language, Colorize } from "@material-ui/icons";
-import React, { useState, useContext } from "react";
+import { Menu as MenuIcon, Language } from "@material-ui/icons";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import { LoginModal } from "../Login";
 import { LanguageType } from "../../Enums/LanguageType";
-import { LanguageContext } from "../../Contexts/LanguageContext";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { withUser } from "../../HOC/withUser";
-import { AuthContextPropsExtended } from "../../Interfaces/AuthContextPropsExtended";
-import { IUserProps } from "../../Interfaces";
+import { ILanguageOption, IUserProps } from "../../Interfaces";
+import { withTranslationStore } from "../../HOC/withTranslationStore";
+import { ITranslationStoreProps } from "../../Interfaces/ITranslationStoreProps";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -34,14 +34,16 @@ const useStyles = makeStyles((theme) => ({
 
 interface IProps {
   children: React.ReactNode;
-  language: LanguageType;
 }
 
-export function NavBar({ children, language, auth }: IProps & IUserProps) {
+export function NavBar({
+  children,
+  auth,
+  translationStore,
+}: IProps & IUserProps & ITranslationStoreProps) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-
-  const languageContext = useContext(LanguageContext);
+  const language = translationStore.state.currentLanguage;
 
   const toggleLoginModal = () => {
     setIsLoginModalOpen(!isLoginModalOpen);
@@ -56,7 +58,7 @@ export function NavBar({ children, language, auth }: IProps & IUserProps) {
   };
 
   const handleLanguageMenuItemClicked = (language: LanguageType) => {
-    languageContext.setLanguage(language);
+    translationStore.updateLanguage(language);
     handleLanguageMenuClose();
   };
 
@@ -134,6 +136,14 @@ export function NavBar({ children, language, auth }: IProps & IUserProps) {
               Work Areas
             </Link>
           </Button>
+          <Button color="inherit" title="View current Work Area schedules">
+            <Link
+              to="/Admin"
+              style={{ textDecoration: "none", color: "white" }}
+            >
+              Admin
+            </Link>
+          </Button>
           <Button
             variant="contained"
             color="primary"
@@ -181,4 +191,4 @@ export function NavBar({ children, language, auth }: IProps & IUserProps) {
   );
 }
 
-export default withUser(NavBar);
+export default withTranslationStore(withUser(NavBar));

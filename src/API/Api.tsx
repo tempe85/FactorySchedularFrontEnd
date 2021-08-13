@@ -1,5 +1,8 @@
 import axios, { AxiosResponse } from "axios";
+import { toast } from "react-toastify";
+import { LanguageType } from "../Enums";
 import {
+  ITranslationResponse,
   IWorkArea,
   IWorkAreaCreate,
   IWorkBuilding,
@@ -23,6 +26,33 @@ async function handleBasicResponse<T>(axiosPromise: Promise<AxiosResponse<T>>) {
     throw error;
   }
 }
+
+//Gets the translation from the translation service
+export const getTextTranslations = async (
+  text: string[],
+  languageIsoString: string
+): Promise<ITranslationResponse | undefined> => {
+  try {
+    const translations = (
+      await axios.post<ITranslationResponse>(
+        "http://flip3.engr.oregonstate.edu:9183/",
+        {
+          text,
+          languageIsoString,
+        }
+      )
+    ).data;
+
+    if (!translations) {
+      toast.error("Unable to fetch translations");
+      return Promise.resolve(undefined);
+    }
+    return translations;
+  } catch (error) {
+    toast.error("Unable to fetch translations");
+    return Promise.resolve(undefined);
+  }
+};
 
 //Building CRUD
 export const getWorkBuildings = async (): Promise<IWorkBuilding[]> => {
@@ -101,7 +131,7 @@ export const deleteWorkArea = async (id: string) => {
   return handleBasicResponse(axios.delete(`${baseUrl}/workAreas/${id}`));
 };
 
-export const getWorkStationsByWorkAreas = async (workAreaIds: number[]) => {
+export const getWorkStationsByWorkAreas = async (workAreaIds: string[]) => {
   return handleBasicResponse(
     axios.post<IWorkStationsByWorkArea[]>(
       `${baseUrl}/workStation/workStationsByWorkAreas`,

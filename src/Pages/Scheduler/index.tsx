@@ -9,7 +9,6 @@ import {
 import styled from "styled-components";
 import { Button } from "@material-ui/core";
 import Select from "react-select";
-import { InitialData } from "../../Mocks/Initial-data";
 import { Layout } from "../../Containers/Layout";
 import {
   IWorkArea,
@@ -20,6 +19,7 @@ import {
 } from "../../Interfaces";
 import { toast } from "react-toastify";
 import { getWorkBuildings, getWorkBuildingWorkAreas } from "../../API/Api";
+import { InitialData } from "../../Mocks/initial-data";
 
 const Container = styled.div`
   display: flex;

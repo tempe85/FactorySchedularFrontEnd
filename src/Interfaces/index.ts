@@ -1,5 +1,4 @@
 export type { ITaskData } from "./ITaskData";
-export type { ILanguageContext } from "./ILanguageContext";
 export type { IWorkBuilding } from "./IWorkBuilding";
 export type { IWorkArea } from "./IWorkArea";
 export type { IWorkAreaCreate } from "./IWorkAreaCreate";
@@ -15,3 +14,6 @@ export type { IWorkStationCreate } from "./IWorkStationCreate";
 export type { IWorkStationUpdate } from "./IWorkStationUpdate";
 export type { IUser } from "./IUser";
 export type { IUserProps } from "./IUserProps";
+export type { ITranslationResponse } from "./ITranslationResponse";
+export type { ISourceTargetTranslations } from "./ITranslatedDictionary";
+export type { ILanguageOption } from "./ILanguageOption";

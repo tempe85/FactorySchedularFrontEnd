@@ -1,5 +1,6 @@
 export enum LanguageType {
-  English = "English",
-  French = "French",
-  Spanish = "Spanish",
+  English,
+  French,
+  Spanish,
+  Portuguese,
 }

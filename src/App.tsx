@@ -7,6 +7,8 @@ import { HomePage, Scheduler, WorkAreas } from "./Pages";
 import { AuthProvider, AuthProviderProps, User } from "oidc-react";
 import { LoggedInUser } from "./Containers/LoggedInUser";
 import { AuthProviderPropsExtended } from "./Interfaces/AuthProviderPropsExtended";
+import { AdminPage } from "./Pages/Admin";
+import { Provider } from "unstated";
 
 export const routes = [
   {
@@ -21,6 +23,12 @@ export const routes = [
     main: () => <Scheduler />,
   },
   {
+    path: "/Admin",
+    exact: true,
+    sidebar: () => <div></div>,
+    main: () => <AdminPage />,
+  },
+  {
     path: "/",
     sidebar: () => <div></div>,
     main: () => <HomePage />,
@@ -32,7 +40,7 @@ const oidcConfiguration: AuthProviderPropsExtended = {
     window.location.hash = "";
   },
   autoSignIn: false,
-  authority: "https://localhost:5001",
+  authority: "https://localhost:5001/",
   clientId: "frontend",
   scope:
     "openid profile factoryScheduler.fullaccess IdentityServerApi roles user_data",
@@ -46,20 +54,22 @@ const oidcConfiguration: AuthProviderPropsExtended = {
 //update client id later
 function App() {
   return (
-    <AuthProvider {...(oidcConfiguration as AuthProviderProps)}>
-      <Router>
-        <Switch>
-          {routes.map((route, index) => (
-            <Route
-              key={index}
-              path={route.path}
-              exact={route.exact}
-              children={<route.main />}
-            />
-          ))}
-        </Switch>
-      </Router>
-    </AuthProvider>
+    <Provider>
+      <AuthProvider {...(oidcConfiguration as AuthProviderProps)}>
+        <Router>
+          <Switch>
+            {routes.map((route, index) => (
+              <Route
+                key={index}
+                path={route.path}
+                exact={route.exact}
+                children={<route.main />}
+              />
+            ))}
+          </Switch>
+        </Router>
+      </AuthProvider>
+    </Provider>
   );
 }
 

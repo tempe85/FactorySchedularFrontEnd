@@ -1,5 +1,5 @@
-import { LanguageType } from "./Enums";
-import { ILanguageOption } from "./Interfaces";
+import { LanguageType } from "../Enums";
+import { ILanguageOption } from "../Interfaces";
 
 //Reference https://raw.githubusercontent.com/matheuss/google-translate-api/master/languages.js for iso string values
 export const LanguageConfiguration: Map<LanguageType, ILanguageOption> =

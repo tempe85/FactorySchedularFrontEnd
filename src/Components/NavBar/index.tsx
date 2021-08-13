@@ -8,7 +8,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import { Menu as MenuIcon, Language } from "@material-ui/icons";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import { LoginModal } from "../Login";
@@ -16,7 +16,7 @@ import { LanguageType } from "../../Enums/LanguageType";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { withUser } from "../../HOC/withUser";
-import { ILanguageOption, IUserProps } from "../../Interfaces";
+import { IUserProps } from "../../Interfaces";
 import { withTranslationStore } from "../../HOC/withTranslationStore";
 import { ITranslationStoreProps } from "../../Interfaces/ITranslationStoreProps";
 
@@ -45,6 +45,9 @@ export function NavBar({
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const language = translationStore.state.currentLanguage;
 
+  useEffect(() => {
+    console.log("Language has been updated!");
+  }, [language.languageType]);
   const toggleLoginModal = () => {
     setIsLoginModalOpen(!isLoginModalOpen);
   };
@@ -154,7 +157,7 @@ export function NavBar({
           >
             <ArrowDropDownIcon />
             <Language />
-            {language}
+            {language.languageHumanReadableString}
           </Button>
           <Menu
             id="simple-menu"

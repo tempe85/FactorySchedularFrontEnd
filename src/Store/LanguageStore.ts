@@ -1,19 +1,31 @@
 import { Container } from "unstated";
 import { getTextTranslations } from "../API/Api";
-import { LanguageType } from "../Enums";
+import { InitialHardCodedTextConfigMap } from "../Config/InitialHardCodedTextConfig";
+import { LanguageConfiguration } from "../Config/LanguageConfiguration";
+import { LanguageType, TextTranslationType } from "../Enums";
 import {
   ILanguageOption,
   ISourceTargetTranslations,
+  ITextLanguageTranslation,
   ITranslationResponse,
   IWorkBuilding,
 } from "../Interfaces";
-import { LanguageConfiguration } from "../LanguageConfiguration";
-import { CloneArrayOfObjects, ConcatMaps } from "../Utilities";
+import {
+  CloneArrayOfObjects,
+  ConcatMaps,
+  GetHardCodedLangaugeDicationaryEnglishStrings,
+} from "../Utilities";
 
 interface IState {
   currentLanguage: ILanguageOption;
   previousLanguage: ILanguageOption;
   languageDictionaries: ISourceTargetTranslations[];
+  hardCodedLanguageDictionary: Map<
+    TextTranslationType,
+    ITextLanguageTranslation[]
+  >;
+  currentTranslations: LanguageType[];
+  englishTextHardCodedStrings: string[];
 }
 
 export class TranslationStore extends Container<IState> {
@@ -25,6 +37,11 @@ export class TranslationStore extends Container<IState> {
       LanguageType.English
     ) as ILanguageOption,
     languageDictionaries: [],
+    hardCodedLanguageDictionary: InitialHardCodedTextConfigMap,
+    currentTranslations: [LanguageType.English],
+    englishTextHardCodedStrings: GetHardCodedLangaugeDicationaryEnglishStrings(
+      InitialHardCodedTextConfigMap
+    ),
   };
 
   public translateBuildingsData = async (
@@ -74,6 +91,29 @@ export class TranslationStore extends Container<IState> {
       workBuildings,
       translationDescriptionResponseMap,
       translationNameResponseMap
+    );
+  };
+
+  private fetchAllHardCodedLanguageTranslationStrings = (
+    updatedLanguage: LanguageType
+  ) => {
+    const { currentTranslations, hardCodedLanguageDictionary } = this.state;
+    if (currentTranslations.includes(updatedLanguage)) return;
+    const textValues = this.state.englishTextHardCodedStrings;
+  };
+
+  public getHardCodedTextTranslation = (
+    textTranslationType: TextTranslationType
+  ): string => {
+    //assume already fetched
+    const languageType = this.state.currentLanguage.languageType;
+    const hardCodedLanguageDictionary = this.state.hardCodedLanguageDictionary;
+    const translations = hardCodedLanguageDictionary.get(textTranslationType);
+    if (!translations) return "";
+
+    return (
+      translations.filter((p) => p.languageType === languageType)?.[0]
+        ?.translation ?? ""
     );
   };
 

@@ -2,7 +2,7 @@ import { Container } from "unstated";
 import { getTextTranslations } from "../API/Api";
 import { InitialHardCodedTextConfigMap } from "../Config/InitialHardCodedTextConfig";
 import { LanguageConfiguration } from "../Config/LanguageConfiguration";
-import { LanguageType, TextTranslationType } from "../Enums";
+import { CacheKey, LanguageType, TextTranslationType } from "../Enums";
 import {
   ILanguageOption,
   ISourceTargetTranslations,
@@ -13,8 +13,14 @@ import {
 import {
   CloneArrayOfObjects,
   ConcatMaps,
+  GetFromStorage,
   GetHardCodedLangaugeDicationaryEnglishStrings as GetHardCodedLanguageDicationaryEnglishStrings,
+  SetStorage,
 } from "../Utilities";
+import {
+  HandleGetLanguageOnLoadAndFectchTranslationDataIfNeeded,
+  VerifyTranslationResponseObjectIsValid,
+} from "./HelperMethods";
 
 interface IState {
   currentLanguage: ILanguageOption;
@@ -28,11 +34,10 @@ interface IState {
 export class TranslationStore extends Container<IState> {
   public readonly state: IState = {
     currentLanguage: LanguageConfiguration.get(
-      LanguageType.English
+      GetFromStorage<LanguageType>(CacheKey.User_Language) ??
+        LanguageType.English
     ) as ILanguageOption,
-    previousLanguage: LanguageConfiguration.get(
-      LanguageType.English
-    ) as ILanguageOption,
+    previousLanguage: HandleGetLanguageOnLoadAndFectchTranslationDataIfNeeded(),
     languageDictionaries: [],
     hardCodedLanguageDictionary: InitialHardCodedTextConfigMap,
     currentHardCodedTranslations: [LanguageType.English],
@@ -162,12 +167,18 @@ export class TranslationStore extends Container<IState> {
   public getHardCodedTextTranslation = (
     textTranslationType: TextTranslationType
   ): string => {
+    console.log("textTranslationType", textTranslationType);
     //assume already fetched
     const languageType = this.state.currentLanguage.languageType;
     const hardCodedLanguageDictionary = this.state.hardCodedLanguageDictionary;
     const translations = hardCodedLanguageDictionary.get(textTranslationType);
     if (!translations) return "";
 
+    console.log(
+      "translation",
+      translations.filter((p) => p.languageType === languageType)?.[0]
+        ?.translation ?? ""
+    );
     return (
       translations.filter((p) => p.languageType === languageType)?.[0]
         ?.translation ?? ""
@@ -198,8 +209,7 @@ export class TranslationStore extends Container<IState> {
     translationResponse: ITranslationResponse | undefined
   ): Map<string, string> | undefined => {
     if (!translationResponse) return;
-    const isValid =
-      this.verifyTranslationResponseObjectIsValid(translationResponse);
+    const isValid = VerifyTranslationResponseObjectIsValid(translationResponse);
     if (!isValid) {
       console.log("Translation response was invalid!");
       return;
@@ -311,6 +321,7 @@ export class TranslationStore extends Container<IState> {
         this.fetchAllHardCodedLanguageTranslationStringsAndUpdateState(
           updatedLanguage
         );
+        SetStorage(CacheKey.User_Language, updatedLanguage);
       }
     );
   };

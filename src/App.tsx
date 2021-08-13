@@ -3,11 +3,10 @@ import "@fontsource/roboto";
 import "./App.css";
 import NavBar from "./Components/NavBar";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import { HomePage, Scheduler, WorkAreas } from "./Pages";
+import { AdminPage, HomePage, Scheduler, WorkAreas } from "./Pages";
 import { AuthProvider, AuthProviderProps, User } from "oidc-react";
 import { LoggedInUser } from "./Containers/LoggedInUser";
 import { AuthProviderPropsExtended } from "./Interfaces/AuthProviderPropsExtended";
-import { AdminPage } from "./Pages/Admin";
 import { Provider } from "unstated";
 
 export const routes = [

@@ -1,3 +1,4 @@
-export { HomePage } from "./HomePage";
 export { Scheduler } from "./Scheduler";
-export { WorkAreas } from "./WorkAreas";
+export { default as WorkAreas } from "./WorkAreas";
+export { default as AdminPage } from "./Admin";
+export { default as HomePage } from "./HomePage";

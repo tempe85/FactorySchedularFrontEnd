@@ -36,4 +36,20 @@ export const LanguageConfiguration: Map<LanguageType, ILanguageOption> =
         languageType: LanguageType.Portuguese,
       },
     ],
+    [
+      LanguageType.Russian,
+      {
+        languageHumanReadableString: "Russian",
+        languageISOString: "ru",
+        languageType: LanguageType.Russian,
+      },
+    ],
+    [
+      LanguageType.Bulgarian,
+      {
+        languageHumanReadableString: "Bulgarian",
+        languageISOString: "bg",
+        languageType: LanguageType.Bulgarian,
+      },
+    ],
   ]);

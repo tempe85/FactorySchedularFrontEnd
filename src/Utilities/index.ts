@@ -1,4 +1,4 @@
-import { LanguageType, TextTranslationType } from "../Enums";
+import { CacheKey, LanguageType, TextTranslationType } from "../Enums";
 import { ITextLanguageTranslation } from "../Interfaces";
 
 export const ConcatMaps = <T, J>(
@@ -27,4 +27,16 @@ export const GetHardCodedLangaugeDicationaryEnglishStrings = (
     .flat()
     .filter((p) => p.languageType === LanguageType.English)
     .map((p) => p.translation);
+};
+
+export const SetStorage = (cacheKey: CacheKey, data: any) => {
+  window.localStorage.setItem(cacheKey, data);
+};
+
+export const GetFromStorage = <T>(cacheKey: CacheKey): T | undefined => {
+  const storedValue = window.localStorage.getItem(cacheKey);
+  console.log("Stored value", storedValue);
+  return storedValue && storedValue.length > 0
+    ? (storedValue as unknown as T)
+    : undefined;
 };

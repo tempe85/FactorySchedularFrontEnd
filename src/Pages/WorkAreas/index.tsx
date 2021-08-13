@@ -1,13 +1,18 @@
 import React from "react";
 import { Card, CardBody, CardSubtitle, CardText, CardTitle } from "reactstrap";
 import { Layout } from "../../Containers/Layout";
+import { TextTranslationType } from "../../Enums";
+import { withTranslationStore } from "../../HOC/withTranslationStore";
+import { ITranslationStoreProps } from "../../Interfaces/ITranslationStoreProps";
 
-export function WorkAreas() {
+function WorkAreas({ translationStore }: ITranslationStoreProps) {
   return (
     <Layout>
       <>
         <legend style={{ textAlign: "center" }}>
-          Current Work Area Schedules
+          {translationStore.getHardCodedTextTranslation(
+            TextTranslationType.CurrentWorkAreaSchedules
+          )}
         </legend>
         <div style={{ display: "flex", justifyContent: "center" }}>
           <Card style={{ width: "300px", margin: "20px" }}>
@@ -72,3 +77,5 @@ export function WorkAreas() {
     </Layout>
   );
 }
+
+export default withTranslationStore(WorkAreas);

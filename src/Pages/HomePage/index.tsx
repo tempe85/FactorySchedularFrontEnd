@@ -1,7 +1,10 @@
 import React from "react";
 import { Layout } from "../../Containers/Layout";
+import { TextTranslationType } from "../../Enums";
+import { withTranslationStore } from "../../HOC/withTranslationStore";
+import { ITranslationStoreProps } from "../../Interfaces/ITranslationStoreProps";
 
-export function HomePage() {
+function HomePage({ translationStore }: ITranslationStoreProps) {
   return (
     <Layout>
       <h1
@@ -12,7 +15,10 @@ export function HomePage() {
           paddingTop: "200px",
         }}
       >
-        {"Welcome To Factory Schedular! 🏭"}
+        {translationStore.getHardCodedTextTranslation(
+          TextTranslationType.WelcomeToFactorySchedular
+        )}
+        {" 🏭"}
       </h1>
       <div
         style={{
@@ -21,8 +27,12 @@ export function HomePage() {
           alignItems: "center",
         }}
       >
-        Please login and go to the schedule page to update work area schedules.
+        {translationStore.getHardCodedTextTranslation(
+          TextTranslationType.WelcomeSubTitle
+        )}
       </div>
     </Layout>
   );
 }
+
+export default withTranslationStore(HomePage);

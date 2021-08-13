@@ -44,9 +44,17 @@ export function NavBar({
 }: IProps & IUserProps & ITranslationStoreProps) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
   const language = translationStore.state.currentLanguage;
 
   useEffect(() => {
+    if (!isLoaded) {
+      setIsLoaded(true);
+      const languageOnLoad = translationStore.state.currentLanguage;
+      if (languageOnLoad.languageType !== LanguageType.English) {
+        translationStore.updateLanguage(languageOnLoad.languageType);
+      }
+    }
     console.log("Language has been updated!");
   }, [language.languageType]);
   const toggleLoginModal = () => {
@@ -88,6 +96,7 @@ export function NavBar({
   };
 
   const isLoggedIn = auth && auth.userData;
+  const isAdmin = auth && auth.userData;
 
   const classes = useStyles();
 
@@ -106,7 +115,9 @@ export function NavBar({
           <Button color="inherit">
             {" "}
             <Link to="/" style={{ textDecoration: "none", color: "white" }}>
-              Home Page
+              {translationStore.getHardCodedTextTranslation(
+                TextTranslationType.HomePage
+              )}
             </Link>
           </Button>
           <Typography variant="h6" className={classes.title}></Typography>
@@ -114,7 +125,9 @@ export function NavBar({
             <>
               <span>{auth.userData.profile.name}</span>
               <Button color="inherit" onClick={() => handleSignout()}>
-                Log Out
+                {translationStore.getHardCodedTextTranslation(
+                  TextTranslationType.LogOut
+                )}
               </Button>
             </>
           ) : (
@@ -131,7 +144,9 @@ export function NavBar({
                 to="/Schedule"
                 style={{ textDecoration: "none", color: "white" }}
               >
-                Schedule
+                {translationStore.getHardCodedTextTranslation(
+                  TextTranslationType.Schedule
+                )}
               </Link>
             </Button>
           )}
@@ -150,7 +165,9 @@ export function NavBar({
               to="/Admin"
               style={{ textDecoration: "none", color: "white" }}
             >
-              Admin
+              {translationStore.getHardCodedTextTranslation(
+                TextTranslationType.Admin
+              )}
             </Link>
           </Button>
           <Button
@@ -193,10 +210,28 @@ export function NavBar({
               )}
             </MenuItem>
             <MenuItem
+              onClick={() =>
+                handleLanguageMenuItemClicked(LanguageType.Russian)
+              }
+            >
+              {translationStore.getHardCodedTextTranslation(
+                TextTranslationType.Russian
+              )}
+            </MenuItem>
+            <MenuItem
               onClick={() => handleLanguageMenuItemClicked(LanguageType.French)}
             >
               {translationStore.getHardCodedTextTranslation(
                 TextTranslationType.French
+              )}
+            </MenuItem>
+            <MenuItem
+              onClick={() =>
+                handleLanguageMenuItemClicked(LanguageType.Bulgarian)
+              }
+            >
+              {translationStore.getHardCodedTextTranslation(
+                TextTranslationType.Bulgarian
               )}
             </MenuItem>
           </Menu>

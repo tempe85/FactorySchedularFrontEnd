@@ -37,35 +37,6 @@ export const getTextTranslations = async (
   text: string[],
   languageIsoString: string
 ): Promise<ITranslationResponse | undefined> => {
-  // switch (languageIsoString) {
-  //   case "fr":
-  //     return Promise.resolve(MockTranslationFrenchResponse);
-  //   case "es":
-  //     return Promise.resolve(MockTranslationSpanishResponse);
-  //   default:
-  //     return Promise.resolve(MockTranslationPortugueseResponse);
-  // }
-
-  try {
-    const response = await fetch("http://flip3.engr.oregonstate.edu:9183/", {
-      method: "POST",
-      mode: "no-cors",
-      credentials: "same-origin",
-      // headers: {
-      //   "Content-Type": "application/json",
-      // },
-      referrerPolicy: "no-referrer",
-      body: JSON.stringify({
-        text,
-        target: languageIsoString,
-      }), // body data type must match "Content-Type" header
-    })
-      .then((res) => res.json())
-      .then((data) => data);
-  } catch (e) {
-    console.log("ERROR:", e);
-  }
-
   try {
     const translations = (
       await axios.post<ITranslationResponse>(
@@ -176,13 +147,19 @@ export const getWorkStationsByWorkAreas = async (workAreaIds: string[]) => {
 
 export const getWorkStationByWorkStationId = async (id: string) => {
   return handleBasicResponse(
-    axios.get<IWorkStation>(`${baseUrl}/workStation/${id}`)
+    axios.get<IWorkStation>(`${baseUrl}/workStations/${id}`)
   );
 };
 
 export const createWorkStation = async (newWorkStation: IWorkStationCreate) => {
   return handleBasicResponse(
-    axios.post(`${baseUrl}/workStation/`, newWorkStation)
+    axios.post(`${baseUrl}/workStations/`, newWorkStation)
+  );
+};
+
+export const getAllWorkStations = async () => {
+  return handleBasicResponse(
+    axios.get<IWorkStation[]>(`${baseUrl}/workStations`)
   );
 };
 
@@ -191,12 +168,12 @@ export const updateWorkStation = async (
   updateWorkStationInfo: IWorkStationUpdate
 ) => {
   return handleBasicResponse(
-    axios.put(`${baseUrl}/workStation/${workStationId}`, updateWorkStationInfo)
+    axios.put(`${baseUrl}/workStations/${workStationId}`, updateWorkStationInfo)
   );
 };
 
 export const deleteWorkStation = async (id: string) => {
-  return handleBasicResponse(axios.delete(`${baseUrl}/workStation/${id}`));
+  return handleBasicResponse(axios.delete(`${baseUrl}/workStations/${id}`));
 };
 
 export const getAllUsers = async () => {

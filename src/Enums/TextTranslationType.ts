@@ -7,4 +7,12 @@ export enum TextTranslationType {
   LogIn = "LOG IN",
   WelcomeSubTitle = "Please login and go to the schedule page to update work area schedules.",
   HomePage = "HOME PAGE",
+  Admin = "ADMIN",
+  LogOut = "LOG OUT",
+  Schedule = "SCHEDULE",
+  CurrentWorkAreaSchedules = "Current Work Area Schedules",
+  Buildings = "BUILDINGS",
+  WorkStations = "WORK STATIONS",
+  Russian = "Russian",
+  Bulgarian = "Bulgarian",
 }

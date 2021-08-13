@@ -46,7 +46,106 @@ export const InitialHardCodedTextConfigMap: Map<
     [
       {
         languageType: LanguageType.English,
-        translation: TextTranslationType.English,
+        translation: TextTranslationType.French,
+      },
+    ],
+  ],
+  [
+    TextTranslationType.LogIn,
+    [
+      {
+        languageType: LanguageType.English,
+        translation: TextTranslationType.LogIn,
+      },
+    ],
+  ],
+  [
+    TextTranslationType.Admin,
+    [
+      {
+        languageType: LanguageType.English,
+        translation: TextTranslationType.Admin,
+      },
+    ],
+  ],
+  [
+    TextTranslationType.HomePage,
+    [
+      {
+        languageType: LanguageType.English,
+        translation: TextTranslationType.HomePage,
+      },
+    ],
+  ],
+  [
+    TextTranslationType.LogOut,
+    [
+      {
+        languageType: LanguageType.English,
+        translation: TextTranslationType.LogOut,
+      },
+    ],
+  ],
+  [
+    TextTranslationType.Schedule,
+    [
+      {
+        languageType: LanguageType.English,
+        translation: TextTranslationType.Schedule,
+      },
+    ],
+  ],
+  [
+    TextTranslationType.CurrentWorkAreaSchedules,
+    [
+      {
+        languageType: LanguageType.English,
+        translation: TextTranslationType.CurrentWorkAreaSchedules,
+      },
+    ],
+  ],
+  [
+    TextTranslationType.Buildings,
+    [
+      {
+        languageType: LanguageType.English,
+        translation: TextTranslationType.Buildings,
+      },
+    ],
+  ],
+  [
+    TextTranslationType.WorkStations,
+    [
+      {
+        languageType: LanguageType.English,
+        translation: TextTranslationType.WorkStations,
+      },
+    ],
+  ],
+  [
+    TextTranslationType.WelcomeSubTitle,
+    [
+      {
+        languageType: LanguageType.English,
+        translation: TextTranslationType.WelcomeSubTitle,
+      },
+    ],
+  ],
+  [
+    TextTranslationType.Russian,
+    [
+      {
+        languageType: LanguageType.English,
+        translation: TextTranslationType.Russian,
+      },
+    ],
+  ],
+  [
+    TextTranslationType.Bulgarian,
+    [
+      {
+        languageType: LanguageType.English,
+        translation: TextTranslationType.Bulgarian,
       },
     ],
   ],

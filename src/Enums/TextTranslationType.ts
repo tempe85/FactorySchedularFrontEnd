@@ -20,4 +20,5 @@ export enum TextTranslationType {
   scheduleSubtitle = "Schedule",
   viewWorkAreas = "View Work Areas",
   updateLanguage = "Update Langauge",
+  workersString = "Workers",
 }

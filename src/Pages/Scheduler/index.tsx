@@ -11,6 +11,8 @@ import { Button } from "@material-ui/core";
 import Select from "react-select";
 import { Layout } from "../../Containers/Layout";
 import {
+  IEntity,
+  ITaskData,
   IUserProps,
   IWorkArea,
   IWorkBuilding,
@@ -19,21 +21,28 @@ import {
   IWorkStationWorkers,
 } from "../../Interfaces";
 import { toast } from "react-toastify";
-import { getWorkBuildings, getWorkBuildingWorkAreas } from "../../API/Api";
-import { InitialData } from "../../Mocks/initial-data";
+import {
+  getAllUsers,
+  getWorkBuildings,
+  getWorkBuildingWorkAreas,
+  getWorkStationsByWorkAreaId,
+  moveUserStation,
+} from "../../API/Api";
+import { GetTaskData, InitialData } from "../../Mocks/initial-data";
 import { withTranslationStore } from "../../HOC/withTranslationStore";
 import { withUser } from "../../HOC/withUser";
 import { ITranslationStoreProps } from "../../Interfaces/ITranslationStoreProps";
 import { Authorization } from "../../Components/Authorization";
 import { UserRoleType } from "../../Enums";
+import { IMoveUserStationRequest } from "../../Interfaces/IMoveUserStationRequest";
 
 const Container = styled.div`
   display: flex;
   flex-direction: row;
 `;
 
-interface ISelectionType {
-  value: string;
+interface ISelectionType<T extends IEntity> {
+  value: T;
   label: string;
 }
 function Scheduler({
@@ -43,19 +52,22 @@ function Scheduler({
   translationStore,
   userProfile,
 }: ITranslationStoreProps & IUserProps) {
-  const [taskListData, setTaskListData] = useState(InitialData);
+  const [taskListData, setTaskListData] = useState<ITaskData>(InitialData);
   const [homeIndex, setHomeIndex] = useState<number | null>(null);
   const [workBuildings, setWorkBuildings] = useState<IWorkBuilding[]>([]);
   const [workBuildingsSelections, setWorkBuildingsSelections] = useState<
-    ISelectionType[]
+    ISelectionType<IWorkBuilding>[]
   >([]);
   const [workAreaSelections, setWorkAreaSelections] = useState<
-    ISelectionType[]
+    ISelectionType<IWorkArea>[]
   >([]);
-  const [buildingSelection, setBuldingSelection] = useState<ISelectionType>();
-  const [workAreaSelection, setWorkAreaSelection] = useState<ISelectionType>();
-  const [stations, setStations] = useState<IWorkStation[]>([]);
-  const [workers, setWorkers] = useState<IWorker[]>([]);
+  const [buildingSelection, setBuldingSelection] =
+    useState<ISelectionType<IWorkBuilding>>();
+  const [workAreaSelection, setWorkAreaSelection] =
+    useState<ISelectionType<IWorkArea>>();
+  const [workStations, setWorkStations] = useState<IWorkStation[]>([]);
+  const [allWorkers, setAllWorkers] = useState<IWorker[]>([]);
+  const [unassignedWorkers, setUnassignedWorkers] = useState<IWorker[]>([]);
   const [workStationWorkers, setWorkStationWorkers] = useState<
     IWorkStationWorkers[]
   >([]);
@@ -63,19 +75,29 @@ function Scheduler({
 
   useEffect(() => {
     fetchWorkBuildings();
+    fetchWorkers();
   }, []);
+
+  useEffect(() => {
+    if (buildingSelection) {
+      fetchBuildingWorkAreas(buildingSelection.value);
+    }
+  }, [buildingSelection?.label]);
+
+  useEffect(() => {
+    if (workAreaSelection) {
+      fetchWorkStationsByWorkAreaId(workAreaSelection.value);
+    }
+  }, [workAreaSelection?.label]);
 
   const fetchWorkBuildings = async () => {
     try {
       const buildings = await getWorkBuildings();
       setWorkBuildings(buildings);
-      const selections = getReactSelections(buildings.map((p) => p.name));
+      const selections = getReactSelections(buildings);
       setWorkBuildingsSelections(selections);
 
       console.log("BUILDINGS", buildings);
-      if (buildings) {
-        await fetchBuildingWorkAreas(buildings[0]);
-      }
     } catch (error) {
       toast.error("Unable to fetch work buildings", {
         autoClose: false,
@@ -83,10 +105,38 @@ function Scheduler({
     }
   };
 
-  function getReactSelections(values: string[]): ISelectionType[] {
+  const fetchWorkers = async () => {
+    try {
+      const workers = await getAllUsers();
+      const unassignedWorkers = workers.filter(
+        (p) => p.assignedWorkStationId == null
+      );
+      setAllWorkers(workers);
+      setUnassignedWorkers(unassignedWorkers);
+    } catch (e) {
+      toast.error(`Could not fetch workers! ${e}`);
+    }
+  };
+
+  const fetchWorkStationsByWorkAreaId = async (workArea: IWorkArea) => {
+    try {
+      const workStations = await getWorkStationsByWorkAreaId(workArea.id);
+      setTaskListData(GetTaskData(allWorkers, workStations));
+      setWorkStations(workStations);
+      console.log("Task Data", GetTaskData(allWorkers, workStations));
+    } catch (error) {
+      toast.error("Unable to fetch work stations", {
+        autoClose: false,
+      });
+    }
+  };
+
+  function getReactSelections<T extends IEntity>(
+    values: T[]
+  ): ISelectionType<T>[] {
     return values.map((p) => ({
       value: p,
-      label: p,
+      label: p.name,
     }));
   }
 
@@ -94,15 +144,34 @@ function Scheduler({
     try {
       const buildingWorkAreas = await getWorkBuildingWorkAreas(workBuilding.id);
       setWorkAreas(buildingWorkAreas);
-      const selections = getReactSelections(
-        buildingWorkAreas.map((p) => p.name)
-      );
+      const selections = getReactSelections(buildingWorkAreas);
       setWorkAreaSelections(selections);
       console.log("Work Areas", buildingWorkAreas);
 
       //const buildingWorkAreas = await getWorkAreas()
     } catch (error) {
       toast.error(`Unable to fetch Building: ${workBuilding.name} work areas`, {
+        autoClose: false,
+      });
+    }
+  };
+
+  const handleMoveUserStation = async (
+    newWorkStationId: string,
+    userId: string
+  ) => {
+    const updatedStationId =
+      newWorkStationId === "workers" ? undefined : newWorkStationId;
+    const workStationMoveRequest: IMoveUserStationRequest = {
+      newWorkStationId: updatedStationId,
+      userId,
+    };
+
+    try {
+      await moveUserStation(workStationMoveRequest, userId);
+      toast.success(`Worker moved to ${newWorkStationId}!`);
+    } catch (error) {
+      toast.error("Unable to fetch work stations", {
         autoClose: false,
       });
     }
@@ -173,6 +242,7 @@ function Scheduler({
       taskIds: finishTaskIds,
     };
     console.log("newStart", newStart, "newFinish", newFinish);
+    handleMoveUserStation(newFinish.id, draggableId);
 
     setTaskListData((prevState) => {
       return {
@@ -207,7 +277,7 @@ function Scheduler({
         isAuthorized={isLoggedIn}
         userRoleType={UserRoleType.FactorySchedulerUser}
       >
-        {false && (
+        {workBuildingsSelections && (
           <div
             style={{
               display: "flex",
@@ -217,13 +287,35 @@ function Scheduler({
             }}
           >
             <div style={{ width: "500px", textAlign: "center" }}>
-              <h4>Select one or more Work Areas to schedule:</h4>
-              <Select isMulti options={options} />
-              <div style={{ paddingTop: "20px" }}>
+              <h4 style={{ textAlign: "left" }}>Select a work Building :</h4>
+              <Select
+                options={workBuildingsSelections}
+                onChange={(selection) => {
+                  if (selection) {
+                    setBuldingSelection(selection);
+                  }
+                }}
+              />
+              {workAreaSelections && (
+                <>
+                  <h4 style={{ textAlign: "left", paddingTop: "15px" }}>
+                    Select a Work Area :
+                  </h4>
+                  <Select
+                    options={workAreaSelections}
+                    onChange={(selection) => {
+                      if (selection) {
+                        setWorkAreaSelection(selection);
+                      }
+                    }}
+                  />
+                </>
+              )}
+              {/* <div style={{ paddingTop: "20px" }}>
                 <Button color="primary" variant="contained">
                   Start Scheduling
                 </Button>
-              </div>
+              </div> */}
             </div>
           </div>
         )}
@@ -242,31 +334,16 @@ function Scheduler({
         >
           {(provided) => ( */}
                 {/* <Container {...provided.droppableProps} ref={provided.innerRef}> */}
-                <Select
-                  options={workBuildingsSelections}
-                  onChange={(selection) => {
-                    if (selection) {
-                      setBuldingSelection(selection);
-                    }
-                  }}
-                />
-                {buildingSelection && (
-                  <Select
-                    options={workAreaSelections}
-                    onChange={(selection) => {
-                      if (selection) {
-                        setWorkAreaSelection(selection);
-                      }
-                    }}
-                  />
-                )}
-                {workAreaSelection && (
+
+                {workAreaSelection && taskListData && (
                   <div
                     style={{ display: "flex", justifyContent: "space-evenly" }}
                   >
                     <div>
                       <div>
-                        <h1 style={{ textAlign: "center" }}>Work Area 1</h1>
+                        <h1 style={{ textAlign: "center", paddingTop: "50px" }}>
+                          {workAreaSelection?.value.name}
+                        </h1>
                         <Container>
                           {taskListData.columnOrder.map((columnId, index) => {
                             if (columnId === "workers") return;
@@ -306,12 +383,12 @@ function Scheduler({
                         />
                       </Container>
                       <div style={{ textAlign: "center" }}>
-                        <Button color="primary" variant="contained">
+                        {/* <Button color="primary" variant="contained">
                           Save Schedule
-                        </Button>
-                        <Button color="secondary" variant="contained">
+                        </Button> */}
+                        {/* <Button color="secondary" variant="contained">
                           Undo
-                        </Button>
+                        </Button> */}
                       </div>
                     </div>
                   </div>

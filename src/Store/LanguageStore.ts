@@ -167,18 +167,12 @@ export class TranslationStore extends Container<IState> {
   public getHardCodedTextTranslation = (
     textTranslationType: TextTranslationType
   ): string => {
-    console.log("textTranslationType", textTranslationType);
     //assume already fetched
     const languageType = this.state.currentLanguage.languageType;
     const hardCodedLanguageDictionary = this.state.hardCodedLanguageDictionary;
     const translations = hardCodedLanguageDictionary.get(textTranslationType);
     if (!translations) return "";
 
-    console.log(
-      "translation",
-      translations.filter((p) => p.languageType === languageType)?.[0]
-        ?.translation ?? ""
-    );
     return (
       translations.filter((p) => p.languageType === languageType)?.[0]
         ?.translation ?? ""

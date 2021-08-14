@@ -42,7 +42,6 @@ export const SetStorage = (cacheKey: CacheKey, data: any) => {
 
 export const GetFromStorage = <T>(cacheKey: CacheKey): T | undefined => {
   const storedValue = window.localStorage.getItem(cacheKey);
-  console.log("Stored value", storedValue);
   return storedValue && storedValue.length > 0
     ? (storedValue as unknown as T)
     : undefined;

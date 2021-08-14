@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Layout } from "../../Containers/Layout";
 import BootstrapTable from "react-bootstrap-table-next";
 import {
+  getAllUsers,
   getAllWorkStations,
   getWorkAreas,
   getWorkBuildings,
@@ -10,6 +11,7 @@ import {
   IUserProps,
   IWorkArea,
   IWorkBuilding,
+  IWorker,
   IWorkStation,
 } from "../../Interfaces";
 import { toast } from "react-toastify";
@@ -28,6 +30,7 @@ function AdminPage({
   const [buildings, setBuilding] = useState<IWorkBuilding[]>([]);
   const [workAreas, setWorkAreas] = useState<IWorkArea[]>([]);
   const [workStations, setWorkStations] = useState<IWorkStation[]>([]);
+  const [allWorkers, setAllWorkers] = useState<IWorker[]>([]);
 
   useEffect(() => {
     getBuildingsWorkAreasAndWorkStations();
@@ -38,6 +41,7 @@ function AdminPage({
     await fetchBuildings();
     await fetchWorkAreas();
     await fetchWorkStations();
+    await fetchWorkers();
     setIsLoading(false);
   };
 
@@ -56,6 +60,18 @@ function AdminPage({
       setWorkAreas(workAreas);
     } catch (error) {
       toast.error(`Unable to fetch work area. ${error}`);
+    }
+  };
+
+  const fetchWorkers = async () => {
+    try {
+      const workers = await getAllUsers();
+      const unassignedWorkers = workers.filter(
+        (p) => p.assignedWorkStationId == null
+      );
+      setAllWorkers(workers);
+    } catch (e) {
+      toast.error(`Could not fetch workers! ${e}`);
     }
   };
 
@@ -121,6 +137,29 @@ function AdminPage({
     {
       dataField: "workerCapacity",
       text: "Work Area Capacity",
+    },
+  ];
+
+  const usersColumns = [
+    {
+      dataField: "id",
+      text: "Id",
+    },
+    {
+      dataField: "firstName",
+      text: "First Name",
+    },
+    {
+      dataField: "lastName",
+      text: "Last Name",
+    },
+    {
+      dataField: "email",
+      text: "Email",
+    },
+    {
+      dataField: "assignedWorkStationId",
+      text: "Assigned Work Station Id",
     },
   ];
 
@@ -259,6 +298,37 @@ function AdminPage({
                     keyField={"id"}
                     data={workStations}
                     columns={workStationColumns}
+                    bordered
+                    striped
+                  />
+                </div>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
+              >
+                <h2>
+                  {" "}
+                  {translationStore.getHardCodedTextTranslation(
+                    TextTranslationType.workersString
+                  )}
+                </h2>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <BootstrapTable
+                    remote={{ filter: true }}
+                    keyField={"id"}
+                    data={allWorkers}
+                    columns={usersColumns}
                     bordered
                     striped
                   />

@@ -58,7 +58,6 @@ export function NavBar({
         translationStore.updateLanguage(languageOnLoad.languageType);
       }
     }
-    console.log("Language has been updated!");
   }, [language.languageType]);
   const toggleLoginModal = () => {
     setIsLoginModalOpen(!isLoginModalOpen);
@@ -100,7 +99,6 @@ export function NavBar({
 
   const classes = useStyles();
 
-  console.log("userProfile", userProfile);
   return (
     <>
       <AppBar position="static">

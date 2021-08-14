@@ -1,4 +1,6 @@
-export interface IWorkBuilding {
+import { IEntity } from "./IEntity";
+
+export interface IWorkBuilding extends IEntity {
   id: string;
   name: string;
   description: string;

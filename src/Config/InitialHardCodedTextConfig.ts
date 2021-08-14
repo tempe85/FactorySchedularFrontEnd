@@ -194,4 +194,13 @@ export const InitialHardCodedTextConfigMap: Map<
       },
     ],
   ],
+  [
+    TextTranslationType.workersString,
+    [
+      {
+        languageType: LanguageType.English,
+        translation: TextTranslationType.workersString,
+      },
+    ],
+  ],
 ]);

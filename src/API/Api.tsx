@@ -7,11 +7,13 @@ import {
   IWorkBuilding,
   IWorkBuildingCreate,
   IWorkBuildingUpdate,
+  IWorker,
   IWorkStation,
   IWorkStationCreate,
   IWorkStationsByWorkArea,
   IWorkStationUpdate,
 } from "../Interfaces";
+import { IMoveUserStationRequest } from "../Interfaces/IMoveUserStationRequest";
 
 const baseUrl = "https://localhost:5001";
 
@@ -137,6 +139,12 @@ export const getWorkStationsByWorkAreas = async (workAreaIds: string[]) => {
   );
 };
 
+export const getWorkStationsByWorkAreaId = async (workAreaId: string) => {
+  return handleBasicResponse(
+    axios.get<IWorkStation[]>(`${baseUrl}/workStations/WorkArea/${workAreaId}`)
+  );
+};
+
 export const getWorkStationByWorkStationId = async (id: string) => {
   return handleBasicResponse(
     axios.get<IWorkStation>(`${baseUrl}/workStations/${id}`)
@@ -155,7 +163,6 @@ export const getAllWorkStations = async () => {
   );
 };
 
-
 export const updateWorkStation = async (
   workStationId: string,
   updateWorkStationInfo: IWorkStationUpdate
@@ -170,7 +177,19 @@ export const deleteWorkStation = async (id: string) => {
 };
 
 export const getAllUsers = async () => {
-  return handleBasicResponse(axios.get(`${baseUrl}/FactorySchedulerUsers/`));
+  return handleBasicResponse(axios.get<IWorker[]>(`${baseUrl}/Users/`));
+};
+
+export const moveUserStation = async (
+  moveUserRequest: IMoveUserStationRequest,
+  id: string
+) => {
+  return handleBasicResponse(
+    axios.put<IWorker[]>(
+      `${baseUrl}/Users/moveUserStation/${id}`,
+      moveUserRequest
+    )
+  );
 };
 
 // export const updateWorkStationWorkers = async (

@@ -1,4 +1,6 @@
-export interface IWorkArea {
+import { IEntity } from "./IEntity";
+
+export interface IWorkArea extends IEntity {
   id: string;
   buildingName: string;
   buildingDescription: string;

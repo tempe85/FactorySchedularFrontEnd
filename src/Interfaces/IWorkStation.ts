@@ -1,7 +1,8 @@
 import { WorkStationType } from "../Enums";
+import { IEntity } from "./IEntity";
 import { IWorkStationUser } from "./IWorkStationUser";
 
-export interface IWorkStation {
+export interface IWorkStation extends IEntity {
   id: string;
   name: string;
   description: string;

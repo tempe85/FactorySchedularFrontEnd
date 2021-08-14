@@ -1,16 +1,20 @@
 export interface ITaskData {
-  tasks: {
-    [key: string]: {
-      id: string;
-      content: string;
-    };
-  };
-  columns: {
-    [key: string]: {
-      id: string;
-      title: string;
-      taskIds: string[];
-    };
-  };
+  tasks: ITaskDataTask;
+  columns: ITaskDataColumn;
   columnOrder: string[];
+}
+
+export interface ITaskDataTask {
+  [key: string]: {
+    id: string;
+    content: string;
+  };
+}
+
+export interface ITaskDataColumn {
+  [key: string]: {
+    id: string;
+    title: string;
+    taskIds: string[];
+  };
 }

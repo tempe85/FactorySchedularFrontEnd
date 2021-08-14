@@ -1,4 +1,9 @@
 export interface IWorker {
-  id: number;
+  id: string;
   name: string;
+  email: string;
+  assignedWorkStationId: string;
+  firstName: string;
+  lastName: string;
+  createdDate: Date;
 }

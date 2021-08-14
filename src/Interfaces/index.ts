@@ -18,3 +18,4 @@ export type { ITranslationResponse } from "./ITranslationResponse";
 export type { ISourceTargetTranslations } from "./ITranslatedDictionary";
 export type { ILanguageOption } from "./ILanguageOption";
 export type { ITextLanguageTranslation } from "./ITextLanguageTranslation";
+export type { IEntity } from "./IEntity";

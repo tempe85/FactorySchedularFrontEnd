@@ -17,7 +17,7 @@ export function LoginModal({ toggle, isOpen }: IProps) {
   return (
     <Modal isOpen={isOpen} toggle={toggle}>
       <ModalHeader toggle={toggle}>
-        <div style={{ textAlign: "center" }}>Signup for FactorySchedular</div>
+        <div style={{ textAlign: "center" }}>Signup for FactoryScheduler</div>
       </ModalHeader>
       <ModalBody>
         <div

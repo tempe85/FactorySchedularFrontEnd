@@ -6,11 +6,11 @@ export const InitialHardCodedTextConfigMap: Map<
   ITextLanguageTranslation[]
 > = new Map<TextTranslationType, ITextLanguageTranslation[]>([
   [
-    TextTranslationType.WelcomeToFactorySchedular,
+    TextTranslationType.WelcomeToFactoryScheduler,
     [
       {
         languageType: LanguageType.English,
-        translation: TextTranslationType.WelcomeToFactorySchedular,
+        translation: TextTranslationType.WelcomeToFactoryScheduler,
       },
     ],
   ],
@@ -132,6 +132,24 @@ export const InitialHardCodedTextConfigMap: Map<
     ],
   ],
   [
+    TextTranslationType.WelcomeSubTitle2,
+    [
+      {
+        languageType: LanguageType.English,
+        translation: TextTranslationType.WelcomeSubTitle2,
+      },
+    ],
+  ],
+  [
+    TextTranslationType.WelcomeSubTitle3,
+    [
+      {
+        languageType: LanguageType.English,
+        translation: TextTranslationType.WelcomeSubTitle3,
+      },
+    ],
+  ],
+  [
     TextTranslationType.Russian,
     [
       {
@@ -146,6 +164,33 @@ export const InitialHardCodedTextConfigMap: Map<
       {
         languageType: LanguageType.English,
         translation: TextTranslationType.Bulgarian,
+      },
+    ],
+  ],
+  [
+    TextTranslationType.scheduleSubtitle,
+    [
+      {
+        languageType: LanguageType.English,
+        translation: TextTranslationType.scheduleSubtitle,
+      },
+    ],
+  ],
+  [
+    TextTranslationType.viewWorkAreas,
+    [
+      {
+        languageType: LanguageType.English,
+        translation: TextTranslationType.viewWorkAreas,
+      },
+    ],
+  ],
+  [
+    TextTranslationType.updateLanguage,
+    [
+      {
+        languageType: LanguageType.English,
+        translation: TextTranslationType.updateLanguage,
       },
     ],
   ],

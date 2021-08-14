@@ -11,6 +11,7 @@ import { Button } from "@material-ui/core";
 import Select from "react-select";
 import { Layout } from "../../Containers/Layout";
 import {
+  IUserProps,
   IWorkArea,
   IWorkBuilding,
   IWorker,
@@ -20,6 +21,11 @@ import {
 import { toast } from "react-toastify";
 import { getWorkBuildings, getWorkBuildingWorkAreas } from "../../API/Api";
 import { InitialData } from "../../Mocks/initial-data";
+import { withTranslationStore } from "../../HOC/withTranslationStore";
+import { withUser } from "../../HOC/withUser";
+import { ITranslationStoreProps } from "../../Interfaces/ITranslationStoreProps";
+import { Authorization } from "../../Components/Authorization";
+import { UserRoleType } from "../../Enums";
 
 const Container = styled.div`
   display: flex;
@@ -30,7 +36,13 @@ interface ISelectionType {
   value: string;
   label: string;
 }
-export function Scheduler() {
+function Scheduler({
+  isUserAnAdmin,
+  auth,
+  isLoggedIn,
+  translationStore,
+  userProfile,
+}: ITranslationStoreProps & IUserProps) {
   const [taskListData, setTaskListData] = useState(InitialData);
   const [homeIndex, setHomeIndex] = useState<number | null>(null);
   const [workBuildings, setWorkBuildings] = useState<IWorkBuilding[]>([]);
@@ -191,119 +203,126 @@ export function Scheduler() {
 
   return (
     <Layout>
-      {false && (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            paddingTop: "100px",
-          }}
-        >
-          <div style={{ width: "500px", textAlign: "center" }}>
-            <h4>Select one or more Work Areas to schedule:</h4>
-            <Select isMulti options={options} />
-            <div style={{ paddingTop: "20px" }}>
-              <Button color="primary" variant="contained">
-                Start Scheduling
-              </Button>
+      <Authorization
+        isAuthorized={isLoggedIn}
+        userRoleType={UserRoleType.FactorySchedulerUser}
+      >
+        {false && (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              paddingTop: "100px",
+            }}
+          >
+            <div style={{ width: "500px", textAlign: "center" }}>
+              <h4>Select one or more Work Areas to schedule:</h4>
+              <Select isMulti options={options} />
+              <div style={{ paddingTop: "20px" }}>
+                <Button color="primary" variant="contained">
+                  Start Scheduling
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
-      {true && (
-        <>
-          <DragDropContext
-            onDragUpdate={onDragUpdate}
-            onDragStart={onDragStart}
-            onDragEnd={onDragEnd}
-          >
-            <>
-              {/* <Droppable
+        )}
+        {true && (
+          <>
+            <DragDropContext
+              onDragUpdate={onDragUpdate}
+              onDragStart={onDragStart}
+              onDragEnd={onDragEnd}
+            >
+              <>
+                {/* <Droppable
           droppableId="all-columns"
           direction="horizontal"
           type="column"
         >
           {(provided) => ( */}
-              {/* <Container {...provided.droppableProps} ref={provided.innerRef}> */}
-              <Select
-                options={workBuildingsSelections}
-                onChange={(selection) => {
-                  if (selection) {
-                    setBuldingSelection(selection);
-                  }
-                }}
-              />
-              {buildingSelection && (
+                {/* <Container {...provided.droppableProps} ref={provided.innerRef}> */}
                 <Select
-                  options={workAreaSelections}
+                  options={workBuildingsSelections}
                   onChange={(selection) => {
                     if (selection) {
-                      setWorkAreaSelection(selection);
+                      setBuldingSelection(selection);
                     }
                   }}
                 />
-              )}
-              {workAreaSelection && (
-                <div
-                  style={{ display: "flex", justifyContent: "space-evenly" }}
-                >
-                  <div>
+                {buildingSelection && (
+                  <Select
+                    options={workAreaSelections}
+                    onChange={(selection) => {
+                      if (selection) {
+                        setWorkAreaSelection(selection);
+                      }
+                    }}
+                  />
+                )}
+                {workAreaSelection && (
+                  <div
+                    style={{ display: "flex", justifyContent: "space-evenly" }}
+                  >
                     <div>
-                      <h1 style={{ textAlign: "center" }}>Work Area 1</h1>
-                      <Container>
-                        {taskListData.columnOrder.map((columnId, index) => {
-                          if (columnId === "workers") return;
-                          const column = taskListData.columns?.[columnId];
-                          const tasks = column.taskIds.map(
-                            (taskId) => taskListData.tasks?.[taskId]
-                          );
+                      <div>
+                        <h1 style={{ textAlign: "center" }}>Work Area 1</h1>
+                        <Container>
+                          {taskListData.columnOrder.map((columnId, index) => {
+                            if (columnId === "workers") return;
+                            const column = taskListData.columns?.[columnId];
+                            const tasks = column.taskIds.map(
+                              (taskId) => taskListData.tasks?.[taskId]
+                            );
 
-                          const isDropDisabled =
-                            homeIndex !== null ? index < homeIndex : false;
-                          return (
-                            <Column
-                              key={column.id}
-                              column={column}
-                              tasks={tasks}
-                              isDropDisabled={false}
-                              index={index}
-                            />
-                          );
-                        })}
-                        {/* {provided.placeholder} */}
-                      </Container>
+                            const isDropDisabled =
+                              homeIndex !== null ? index < homeIndex : false;
+                            return (
+                              <Column
+                                key={column.id}
+                                column={column}
+                                tasks={tasks}
+                                isDropDisabled={false}
+                                index={index}
+                              />
+                            );
+                          })}
+                          {/* {provided.placeholder} */}
+                        </Container>
+                      </div>
                     </div>
-                  </div>
 
-                  {/* )}
+                    {/* )}
         </Droppable> */}
-                  <div>
-                    <Container>
-                      <Column
-                        column={taskListData.columns["workers"]}
-                        tasks={taskListData.columns["workers"].taskIds.map(
-                          (p) => taskListData.tasks?.[p]
-                        )}
-                        isDropDisabled={false}
-                        index={5}
-                      />
-                    </Container>
-                    <div style={{ textAlign: "center" }}>
-                      <Button color="primary" variant="contained">
-                        Save Schedule
-                      </Button>
-                      <Button color="secondary" variant="contained">
-                        Undo
-                      </Button>
+                    <div>
+                      <Container>
+                        <Column
+                          column={taskListData.columns["workers"]}
+                          tasks={taskListData.columns["workers"].taskIds.map(
+                            (p) => taskListData.tasks?.[p]
+                          )}
+                          isDropDisabled={false}
+                          index={5}
+                        />
+                      </Container>
+                      <div style={{ textAlign: "center" }}>
+                        <Button color="primary" variant="contained">
+                          Save Schedule
+                        </Button>
+                        <Button color="secondary" variant="contained">
+                          Undo
+                        </Button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
-            </>
-          </DragDropContext>
-        </>
-      )}
+                )}
+              </>
+            </DragDropContext>
+          </>
+        )}
+      </Authorization>
     </Layout>
   );
 }
+
+export default withTranslationStore(withUser(Scheduler));

@@ -6,14 +6,24 @@ import {
   getWorkAreas,
   getWorkBuildings,
 } from "../../API/Api";
-import { IWorkArea, IWorkBuilding, IWorkStation } from "../../Interfaces";
+import {
+  IUserProps,
+  IWorkArea,
+  IWorkBuilding,
+  IWorkStation,
+} from "../../Interfaces";
 import { toast } from "react-toastify";
 import { withTranslationStore } from "../../HOC/withTranslationStore";
 import { ITranslationStoreProps } from "../../Interfaces/ITranslationStoreProps";
-import { TextTranslationType } from "../../Enums";
+import { TextTranslationType, UserRoleType } from "../../Enums";
 import { CircularProgress } from "@material-ui/core";
+import { Authorization } from "../../Components/Authorization";
+import { withUser } from "../../HOC/withUser";
 
-function AdminPage({ translationStore }: ITranslationStoreProps) {
+function AdminPage({
+  translationStore,
+  isUserAnAdmin,
+}: ITranslationStoreProps & IUserProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [buildings, setBuilding] = useState<IWorkBuilding[]>([]);
   const [workAreas, setWorkAreas] = useState<IWorkArea[]>([]);
@@ -144,117 +154,122 @@ function AdminPage({ translationStore }: ITranslationStoreProps) {
   ];
   return (
     <Layout>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          width: "70%",
-          margin: "auto",
-          alignItems: "center",
-        }}
+      <Authorization
+        isAuthorized={isUserAnAdmin}
+        userRoleType={UserRoleType.Admin}
       >
-        {isLoading ? (
-          <CircularProgress />
-        ) : (
-          <>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-            >
-              <h2>
-                {" "}
-                {translationStore.getHardCodedTextTranslation(
-                  TextTranslationType.Buildings
-                )}
-              </h2>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            width: "70%",
+            margin: "auto",
+            alignItems: "center",
+          }}
+        >
+          {isLoading ? (
+            <CircularProgress />
+          ) : (
+            <>
               <div
                 style={{
                   display: "flex",
                   justifyContent: "center",
+                  flexDirection: "column",
                   alignItems: "center",
                 }}
               >
-                <BootstrapTable
-                  remote={{ filter: true }}
-                  keyField={"id"}
-                  data={buildings}
-                  columns={buildingColumns}
-                  bordered
-                  striped
-                />
+                <h2>
+                  {" "}
+                  {translationStore.getHardCodedTextTranslation(
+                    TextTranslationType.Buildings
+                  )}
+                </h2>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <BootstrapTable
+                    remote={{ filter: true }}
+                    keyField={"id"}
+                    data={buildings}
+                    columns={buildingColumns}
+                    bordered
+                    striped
+                  />
+                </div>
               </div>
-            </div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-            >
-              <h2>
-                {" "}
-                {translationStore.getHardCodedTextTranslation(
-                  TextTranslationType.WorkAreas
-                )}
-              </h2>
               <div
                 style={{
                   display: "flex",
                   justifyContent: "center",
+                  flexDirection: "column",
                   alignItems: "center",
                 }}
               >
-                <BootstrapTable
-                  remote={{ filter: true }}
-                  keyField={"id"}
-                  data={workAreas}
-                  columns={workAreaColumns}
-                  bordered
-                  striped
-                />
+                <h2>
+                  {" "}
+                  {translationStore.getHardCodedTextTranslation(
+                    TextTranslationType.WorkAreas
+                  )}
+                </h2>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <BootstrapTable
+                    remote={{ filter: true }}
+                    keyField={"id"}
+                    data={workAreas}
+                    columns={workAreaColumns}
+                    bordered
+                    striped
+                  />
+                </div>
               </div>
-            </div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-            >
-              <h2>
-                {" "}
-                {translationStore.getHardCodedTextTranslation(
-                  TextTranslationType.WorkStations
-                )}
-              </h2>
               <div
                 style={{
                   display: "flex",
                   justifyContent: "center",
+                  flexDirection: "column",
                   alignItems: "center",
                 }}
               >
-                <BootstrapTable
-                  remote={{ filter: true }}
-                  keyField={"id"}
-                  data={workStations}
-                  columns={workStationColumns}
-                  bordered
-                  striped
-                />
+                <h2>
+                  {" "}
+                  {translationStore.getHardCodedTextTranslation(
+                    TextTranslationType.WorkStations
+                  )}
+                </h2>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <BootstrapTable
+                    remote={{ filter: true }}
+                    keyField={"id"}
+                    data={workStations}
+                    columns={workStationColumns}
+                    bordered
+                    striped
+                  />
+                </div>
               </div>
-            </div>
-          </>
-        )}
-      </div>
+            </>
+          )}
+        </div>
+      </Authorization>
     </Layout>
   );
 }
 
-export default withTranslationStore(AdminPage);
+export default withTranslationStore(withUser(AdminPage));

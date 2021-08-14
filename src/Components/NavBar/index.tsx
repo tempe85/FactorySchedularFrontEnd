@@ -41,6 +41,9 @@ export function NavBar({
   children,
   auth,
   translationStore,
+  userProfile,
+  isLoggedIn,
+  isUserAnAdmin,
 }: IProps & IUserProps & ITranslationStoreProps) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -95,11 +98,9 @@ export function NavBar({
     }
   };
 
-  const isLoggedIn = auth && auth.userData;
-  const isAdmin = auth && auth.userData;
-
   const classes = useStyles();
 
+  console.log("userProfile", userProfile);
   return (
     <>
       <AppBar position="static">
@@ -121,9 +122,9 @@ export function NavBar({
             </Link>
           </Button>
           <Typography variant="h6" className={classes.title}></Typography>
-          {auth && auth.userData ? (
+          {userProfile ? (
             <>
-              <span>{auth.userData.profile.name}</span>
+              <span>{userProfile.name}</span>
               <Button color="inherit" onClick={() => handleSignout()}>
                 {translationStore.getHardCodedTextTranslation(
                   TextTranslationType.LogOut
@@ -159,17 +160,19 @@ export function NavBar({
                 TextTranslationType.WorkAreas
               )}
             </Link>
-          </Button>
-          <Button color="inherit" title="View current Work Area schedules">
-            <Link
-              to="/Admin"
-              style={{ textDecoration: "none", color: "white" }}
-            >
-              {translationStore.getHardCodedTextTranslation(
-                TextTranslationType.Admin
-              )}
-            </Link>
-          </Button>
+          </Button>{" "}
+          {isUserAnAdmin && (
+            <Button color="inherit" title="View current Work Area schedules">
+              <Link
+                to="/Admin"
+                style={{ textDecoration: "none", color: "white" }}
+              >
+                {translationStore.getHardCodedTextTranslation(
+                  TextTranslationType.Admin
+                )}
+              </Link>
+            </Button>
+          )}
           <Button
             variant="contained"
             color="primary"

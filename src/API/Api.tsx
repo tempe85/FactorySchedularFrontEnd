@@ -1,6 +1,5 @@
 import axios, { AxiosResponse } from "axios";
 import { toast } from "react-toastify";
-import { LanguageType } from "../Enums";
 import {
   ITranslationResponse,
   IWorkArea,
@@ -8,18 +7,11 @@ import {
   IWorkBuilding,
   IWorkBuildingCreate,
   IWorkBuildingUpdate,
-  IWorker,
   IWorkStation,
   IWorkStationCreate,
   IWorkStationsByWorkArea,
   IWorkStationUpdate,
-  IWorkStationWorkers,
 } from "../Interfaces";
-import {
-  MockTranslationFrenchResponse,
-  MockTranslationPortugueseResponse,
-  MockTranslationSpanishResponse,
-} from "../Mocks/MockTranslationResponse";
 
 const baseUrl = "https://localhost:5001";
 
@@ -162,6 +154,7 @@ export const getAllWorkStations = async () => {
     axios.get<IWorkStation[]>(`${baseUrl}/workStations`)
   );
 };
+
 
 export const updateWorkStation = async (
   workStationId: string,

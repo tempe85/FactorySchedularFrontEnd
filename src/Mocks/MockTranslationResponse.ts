@@ -1,5 +1,6 @@
 import { ITranslationResponse } from "../Interfaces";
 
+//Was used for testing, no longer being implemented
 export const MockTranslationSpanishResponse: ITranslationResponse = {
   text: [
     "Welcome To Factory Schedular!",

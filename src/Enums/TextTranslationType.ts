@@ -1,11 +1,13 @@
 export enum TextTranslationType {
-  WelcomeToFactorySchedular = "Welcome To Factory Schedular!",
+  WelcomeToFactoryScheduler = "Welcome To Factory Scheduler!",
   English = "English",
   WorkAreas = "WORK AREAS",
   Spanish = "Spanish",
   French = "French",
   LogIn = "LOG IN",
-  WelcomeSubTitle = "Please login and go to the schedule page to update work area schedules.",
+  WelcomeSubTitle = "Login and go to the schedule page to update work area schedules.",
+  WelcomeSubTitle2 = "To view current schedules for users go to the Work Area page",
+  WelcomeSubTitle3 = "To update the language, please select from the language menu on the top right",
   HomePage = "HOME PAGE",
   Admin = "ADMIN",
   LogOut = "LOG OUT",
@@ -15,4 +17,7 @@ export enum TextTranslationType {
   WorkStations = "WORK STATIONS",
   Russian = "Russian",
   Bulgarian = "Bulgarian",
+  scheduleSubtitle = "Schedule",
+  viewWorkAreas = "View Work Areas",
+  updateLanguage = "Update Langauge",
 }

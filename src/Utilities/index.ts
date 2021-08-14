@@ -1,5 +1,12 @@
-import { CacheKey, LanguageType, TextTranslationType } from "../Enums";
+import {
+  CacheKey,
+  LanguageType,
+  TextTranslationType,
+  UserRoleType,
+} from "../Enums";
 import { ITextLanguageTranslation } from "../Interfaces";
+import { AuthContextPropsExtended } from "../Interfaces/AuthContextPropsExtended";
+import { ExtendedProfile } from "../Interfaces/IExtendedUserSettings";
 
 export const ConcatMaps = <T, J>(
   map1: Map<T, J> | undefined,
